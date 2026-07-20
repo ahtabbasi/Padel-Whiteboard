@@ -2,7 +2,10 @@ import {
   BACK_WALL_GLASS_PANEL_COUNT,
   COURT_VIEW_HEIGHT,
   COURT_VIEW_WIDTH,
+  SIDE_ENTRANCE_Y0,
+  SIDE_ENTRANCE_Y1,
 } from '../lib/courtGeometry';
+import { toPxY } from '../lib/svgCoords';
 
 /** Visible thickness of walls in the top-down SVG view. */
 const GLASS_DEPTH = 8;
@@ -73,6 +76,44 @@ function SideGlassPanels({
   );
 }
 
+function SideFenceWithEntrance({
+  x,
+  fenceStartPx,
+  fenceEndPx,
+  entranceStartPx,
+  entranceEndPx,
+}: {
+  x: number;
+  fenceStartPx: number;
+  fenceEndPx: number;
+  entranceStartPx: number;
+  entranceEndPx: number;
+}) {
+  const segments: { y: number; height: number }[] = [];
+
+  if (entranceStartPx > fenceStartPx) {
+    segments.push({ y: fenceStartPx, height: entranceStartPx - fenceStartPx });
+  }
+  if (fenceEndPx > entranceEndPx) {
+    segments.push({ y: entranceEndPx, height: fenceEndPx - entranceEndPx });
+  }
+
+  return (
+    <>
+      {segments.map((segment, i) => (
+        <rect
+          key={i}
+          x={x}
+          y={segment.y}
+          width={GLASS_DEPTH}
+          height={segment.height}
+          className="wall-fence"
+        />
+      ))}
+    </>
+  );
+}
+
 /**
  * Decorative walls: white glass panels (5 across each back wall, 2 per side end),
  * with a solid gray fence bar in the remaining side space toward the net.
@@ -82,6 +123,8 @@ export function BordersOverlay() {
   const glassBlockDepth = SIDE_GLASS_PANEL_COUNT * backLayout.panelSize + PANEL_GAP_PX;
   const fenceStartPx = glassBlockDepth + PANEL_GAP_PX;
   const fenceEndPx = COURT_VIEW_HEIGHT - glassBlockDepth - PANEL_GAP_PX;
+  const entranceStartPx = toPxY(SIDE_ENTRANCE_Y0);
+  const entranceEndPx = toPxY(SIDE_ENTRANCE_Y1);
 
   return (
     <g className="borders-overlay">
@@ -92,12 +135,12 @@ export function BordersOverlay() {
         <g key={x}>
           <SideGlassPanels x={x} anchor="top" panelSize={backLayout.panelSize} />
           <SideGlassPanels x={x} anchor="bottom" panelSize={backLayout.panelSize} />
-          <rect
+          <SideFenceWithEntrance
             x={x}
-            y={fenceStartPx}
-            width={GLASS_DEPTH}
-            height={fenceEndPx - fenceStartPx}
-            className="wall-fence"
+            fenceStartPx={fenceStartPx}
+            fenceEndPx={fenceEndPx}
+            entranceStartPx={entranceStartPx}
+            entranceEndPx={entranceEndPx}
           />
         </g>
       ))}

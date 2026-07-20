@@ -35,9 +35,7 @@ export interface DisplaySettings {
   showBall: boolean;
   showBlackHoleTeamA: boolean;
   showBlackHoleTeamB: boolean;
-  showAttackZone: boolean;
   showNoManZone: boolean;
-  showDefenceZone: boolean;
   showBorders: boolean;
   showHighPercentageZone: boolean;
 }

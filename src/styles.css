@@ -1,7 +1,8 @@
 :root {
-  --bg: #b8bec6;
-  --surface: #d1d7de;
-  --surface-alt: #c5ccd4;
+  --bg: #ffffff;
+  --court-bg: #004a8f;
+  --surface: #ffffff;
+  --surface-alt: #f1f5f9;
   --border: #a3abb5;
   --text: #1e293b;
   --text-muted: #64748b;
@@ -15,8 +16,6 @@
   --line-white: #ffffff;
   --ball-green: #c6ef00;
   --no-man: #ef4444;
-  --attack: #22c55e;
-  --defence: #3b82f6;
   --black-hole: #000000;
 
   color-scheme: light;
@@ -198,6 +197,7 @@ button {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: var(--bg);
 }
 
 .board-editor-header {
@@ -226,7 +226,7 @@ button {
   align-items: center;
   justify-content: center;
   padding: 8px;
-  background: var(--bg);
+  background: var(--court-bg);
 }
 
 .court-svg {
@@ -259,7 +259,7 @@ button {
 
 .court-outline {
   fill: none;
-  stroke: var(--line-white);
+  stroke: var(--court-fill-edge);
   stroke-width: 4;
 }
 
@@ -290,19 +290,9 @@ button {
 
 /* ---------- Zones overlay ---------- */
 
-.zone-attack {
-  fill: var(--attack);
-  opacity: 0.2;
-}
-
 .zone-no-man {
   fill: var(--no-man);
   opacity: 0.25;
-}
-
-.zone-defence {
-  fill: var(--defence);
-  opacity: 0.2;
 }
 
 /* ---------- Black hole overlay ---------- */
@@ -459,6 +449,18 @@ button {
   margin-left: auto;
   display: flex;
   gap: 8px;
+}
+
+.toolbar-config-button {
+  width: 40px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.configuration-icon {
+  display: block;
 }
 
 /* ---------- Settings sheet ---------- */

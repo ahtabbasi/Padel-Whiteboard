@@ -10,9 +10,7 @@ const TOGGLES: { key: keyof DisplaySettings; label: string }[] = [
   { key: 'showBall', label: 'Ball' },
   { key: 'showBlackHoleTeamA', label: 'Black hole — Team A (yellow, bottom)' },
   { key: 'showBlackHoleTeamB', label: 'Black hole — Team B (red, top)' },
-  { key: 'showAttackZone', label: 'Attack zone' },
   { key: 'showNoManZone', label: 'No-man zone' },
-  { key: 'showDefenceZone', label: 'Defence zone' },
   { key: 'showBorders', label: 'Glass / fence borders' },
   { key: 'showHighPercentageZone', label: 'High-percentage shot zone' },
 ];
@@ -22,7 +20,7 @@ export function DisplaySettingsPanel({ settings, onToggle, onClose }: DisplaySet
     <div className="sheet-backdrop" onClick={onClose}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="sheet-header">
-          <span className="sheet-title">Display</span>
+          <span className="sheet-title">Configuration</span>
           <button type="button" className="icon-button" onClick={onClose} aria-label="Close">
             ✕
           </button>

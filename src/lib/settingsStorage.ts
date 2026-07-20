@@ -6,9 +6,7 @@ export const DEFAULT_SETTINGS: DisplaySettings = {
   showBall: true,
   showBlackHoleTeamA: false,
   showBlackHoleTeamB: false,
-  showAttackZone: false,
   showNoManZone: false,
-  showDefenceZone: false,
   showBorders: true,
   showHighPercentageZone: false,
 };
