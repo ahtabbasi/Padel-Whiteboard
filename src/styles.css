@@ -1,0 +1,484 @@
+:root {
+  --bg: #0b1220;
+  --surface: #121a2b;
+  --surface-alt: #1a2438;
+  --border: #263252;
+  --text: #eef2ff;
+  --text-muted: #93a0c2;
+  --accent: #22c55e;
+  --accent-dark: #0f6e4f;
+  --team-a: #f04949;
+  --team-b: #3b82f6;
+  --court-fill: #0f6e4f;
+  --court-fill-alt: #14875f;
+  --line-white: #f5f7fa;
+  --no-man: #ef4444;
+  --attack: #22c55e;
+  --defence: #3b82f6;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overscroll-behavior: none;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------- Board library ---------- */
+
+.board-library {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+}
+
+.library-header h1 {
+  font-size: 1.4rem;
+  margin: 0 0 16px;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 0 24px;
+}
+
+.board-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.board-list-item {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.board-list-open {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.board-list-name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.board-list-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.board-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 8px;
+}
+
+.new-board-button {
+  margin-top: 16px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #06210f;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* ---------- Shared icon buttons ---------- */
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.icon-button:active {
+  background: var(--surface-alt);
+}
+
+/* ---------- Board editor ---------- */
+
+.board-editor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.board-editor-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px calc(8px + env(safe-area-inset-top)) 8px;
+  padding-top: max(8px, env(safe-area-inset-top));
+  border-bottom: 1px solid var(--border);
+}
+
+.board-editor-title {
+  flex: 1;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-indicator {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.saved-indicator.saved {
+  color: var(--accent);
+}
+
+.court-container {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: var(--bg);
+}
+
+.court-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ---------- Court markings ---------- */
+
+.court-surface {
+  fill: var(--court-fill);
+}
+
+.court-outline {
+  fill: none;
+  stroke: var(--line-white);
+  stroke-width: 4;
+}
+
+.net-line {
+  stroke: var(--line-white);
+  stroke-width: 6;
+}
+
+.service-line,
+.center-service-line {
+  stroke: var(--line-white);
+  stroke-width: 3;
+}
+
+/* ---------- Borders overlay ---------- */
+
+.wall-glass {
+  stroke: #bfe9ff;
+  stroke-width: 6;
+  opacity: 0.55;
+}
+
+.wall-fence {
+  stroke: #94a3b8;
+  stroke-width: 6;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
+}
+
+/* ---------- Zones overlay ---------- */
+
+.zone-attack {
+  fill: var(--attack);
+  opacity: 0.16;
+}
+
+.zone-no-man {
+  fill: var(--no-man);
+  opacity: 0.22;
+}
+
+.zone-defence {
+  fill: var(--defence);
+  opacity: 0.16;
+}
+
+/* ---------- Black hole overlay ---------- */
+
+.black-hole-line {
+  stroke: #0b1220;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 6;
+  opacity: 0.85;
+}
+
+.black-hole-dot {
+  fill: #0b1220;
+  stroke: var(--line-white);
+  stroke-width: 1.5;
+}
+
+/* ---------- High percentage zone ---------- */
+
+.high-percentage-zone {
+  opacity: 0.28;
+}
+
+.high-percentage-zone-A {
+  fill: var(--team-a);
+}
+
+.high-percentage-zone-B {
+  fill: var(--team-b);
+}
+
+/* ---------- Arrows ---------- */
+
+.movement-arrow {
+  stroke-width: 4;
+  fill: none;
+}
+
+.movement-arrow-A {
+  stroke: var(--team-a);
+}
+
+.movement-arrow-B {
+  stroke: var(--team-b);
+}
+
+.arrowhead-A {
+  fill: var(--team-a);
+}
+
+.arrowhead-B {
+  fill: var(--team-b);
+}
+
+/* ---------- Player & ball tokens ---------- */
+
+.player-token {
+  cursor: grab;
+}
+
+.player-token-hit-area {
+  fill: transparent;
+}
+
+.player-token-dot {
+  stroke: var(--line-white);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.player-token-A .player-token-dot {
+  fill: var(--team-a);
+}
+
+.player-token-B .player-token-dot {
+  fill: var(--team-b);
+}
+
+.player-token-selection-ring {
+  fill: none;
+  stroke: var(--line-white);
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  pointer-events: none;
+}
+
+.ball-token-group {
+  cursor: grab;
+}
+
+.ball-token-hit-area {
+  fill: transparent;
+}
+
+.ball-token {
+  fill: #fef08a;
+  stroke: #1a2438;
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+/* ---------- Toolbar ---------- */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.toolbar-modes {
+  display: flex;
+  gap: 6px;
+  background: var(--surface-alt);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.toolbar-button {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.toolbar-button-active {
+  background: var(--accent);
+  color: #06210f;
+}
+
+.toolbar-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- Settings sheet ---------- */
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 10;
+}
+
+.sheet {
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sheet-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.toggle-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.toggle-row:last-child {
+  border-bottom: none;
+}
+
+.switch {
+  width: 46px;
+  height: 27px;
+  border-radius: 999px;
+  border: none;
+  background: var(--surface-alt);
+  position: relative;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.switch-on {
+  background: var(--accent-dark);
+}
+
+.switch-on .switch-knob {
+  transform: translateX(19px);
+  background: var(--accent);
+}
