@@ -75,13 +75,13 @@ function SideGlassPanels({
 
 /**
  * Decorative walls: white glass panels (5 across each back wall, 2 per side end),
- * with gray fence bars filling the remaining side space toward the net.
+ * with a solid gray fence bar in the remaining side space toward the net.
  */
 export function BordersOverlay() {
   const backLayout = layoutPanels(COURT_VIEW_WIDTH, BACK_WALL_GLASS_PANEL_COUNT, PANEL_GAP_PX);
   const glassBlockDepth = SIDE_GLASS_PANEL_COUNT * backLayout.panelSize + PANEL_GAP_PX;
-  const fenceStartPx = glassBlockDepth;
-  const fenceEndPx = COURT_VIEW_HEIGHT - glassBlockDepth;
+  const fenceStartPx = glassBlockDepth + PANEL_GAP_PX;
+  const fenceEndPx = COURT_VIEW_HEIGHT - glassBlockDepth - PANEL_GAP_PX;
 
   return (
     <g className="borders-overlay">
