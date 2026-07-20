@@ -332,6 +332,21 @@ button {
   fill: var(--team-b);
 }
 
+.high-percentage-bisector {
+  stroke-width: 2.5;
+  stroke-dasharray: 5 5;
+  fill: none;
+  opacity: 0.85;
+}
+
+.high-percentage-bisector-A {
+  stroke: var(--team-a);
+}
+
+.high-percentage-bisector-B {
+  stroke: var(--team-b);
+}
+
 /* ---------- Arrows ---------- */
 
 .movement-arrow {
@@ -347,12 +362,21 @@ button {
   stroke: var(--team-b);
 }
 
-.arrowhead-A {
+.movement-arrowhead-A {
   fill: var(--team-a);
+  stroke: none;
 }
 
-.arrowhead-B {
+.movement-arrowhead-B {
   fill: var(--team-b);
+  stroke: none;
+}
+
+.movement-arrow-hit {
+  stroke: transparent;
+  stroke-width: 18;
+  fill: none;
+  cursor: pointer;
 }
 
 /* ---------- Player tokens ---------- */

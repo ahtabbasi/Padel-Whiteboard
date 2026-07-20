@@ -6,12 +6,17 @@ export interface Point {
   y: number;
 }
 
+export interface PlayerArrow {
+  id: string;
+  target: Point;
+}
+
 export interface PlayerToken {
   id: string;
   team: Team;
   pos: Point;
-  /** At most one arrow per player. The arrow always starts at `pos`, so only the end point is stored. */
-  arrowTarget?: Point;
+  /** Movement arrows from this player. Each starts at the player's current position. */
+  arrows: PlayerArrow[];
 }
 
 export interface Board {

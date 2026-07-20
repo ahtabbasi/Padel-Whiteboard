@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import type { Board, Point } from '../types';
 import { clamp01, createDefaultBall, createDefaultPlayers } from '../lib/courtGeometry';
+import { normalizeBoard } from '../lib/normalizeBoard';
 import { saveBoard } from '../lib/storage';
 
 const AUTOSAVE_DELAY_MS = 500;
 
 export function useBoardEditor(initialBoard: Board) {
-  const [board, setBoard] = useState<Board>(initialBoard);
+  const [board, setBoard] = useState<Board>(() => normalizeBoard(initialBoard));
   const timeoutRef = useRef<number | undefined>(undefined);
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    setBoard(initialBoard);
+    setBoard(normalizeBoard(initialBoard));
     isFirstRender.current = true;
   }, [initialBoard.id]);
 
@@ -38,30 +39,37 @@ export function useBoardEditor(initialBoard: Board) {
       const clamped: Point = { x: clamp01(pos.x), y: clamp01(pos.y) };
       updateBoard((b) => ({
         ...b,
+        players: b.players.map((p) => (p.id === id ? { ...p, pos: clamped } : p)),
+      }));
+    },
+    [updateBoard],
+  );
+
+  const addArrow = useCallback(
+    (id: string, target: Point) => {
+      const clamped: Point = { x: clamp01(target.x), y: clamp01(target.y) };
+      updateBoard((b) => ({
+        ...b,
         players: b.players.map((p) =>
-          p.id === id ? { ...p, pos: clamped, arrowTarget: undefined } : p,
+          p.id === id
+            ? {
+                ...p,
+                arrows: [...p.arrows, { id: crypto.randomUUID(), target: clamped }],
+              }
+            : p,
         ),
       }));
     },
     [updateBoard],
   );
 
-  const setArrow = useCallback(
-    (id: string, target: Point) => {
-      const clamped: Point = { x: clamp01(target.x), y: clamp01(target.y) };
+  const removeArrow = useCallback(
+    (playerId: string, arrowId: string) => {
       updateBoard((b) => ({
         ...b,
-        players: b.players.map((p) => (p.id === id ? { ...p, arrowTarget: clamped } : p)),
-      }));
-    },
-    [updateBoard],
-  );
-
-  const clearArrow = useCallback(
-    (id: string) => {
-      updateBoard((b) => ({
-        ...b,
-        players: b.players.map((p) => (p.id === id ? { ...p, arrowTarget: undefined } : p)),
+        players: b.players.map((p) =>
+          p.id === playerId ? { ...p, arrows: p.arrows.filter((arrow) => arrow.id !== arrowId) } : p,
+        ),
       }));
     },
     [updateBoard],
@@ -83,5 +91,5 @@ export function useBoardEditor(initialBoard: Board) {
     }));
   }, [updateBoard]);
 
-  return { board, movePlayer, setArrow, clearArrow, moveBall, resetPositions };
+  return { board, movePlayer, addArrow, removeArrow, moveBall, resetPositions };
 }

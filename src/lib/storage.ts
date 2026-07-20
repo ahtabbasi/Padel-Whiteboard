@@ -1,5 +1,6 @@
 import type { Board } from '../types';
 import { createNewBoard } from './courtGeometry';
+import { normalizePlayer, type LegacyPlayer } from './normalizeBoard';
 
 const STORAGE_KEY = 'padel-whiteboard:boards:v1';
 const ACTIVE_BOARD_KEY = 'padel-whiteboard:active-board:v1';
@@ -84,11 +85,17 @@ export function duplicateBoard(id: string): Board | undefined {
     name: `${source.name} (copy)`,
     createdAt: now,
     updatedAt: now,
-    players: source.players.map((p) => ({
-      ...p,
-      pos: { ...p.pos },
-      arrowTarget: p.arrowTarget ? { ...p.arrowTarget } : undefined,
-    })),
+    players: source.players.map((p) => {
+      const normalized = normalizePlayer(p as LegacyPlayer);
+      return {
+        ...normalized,
+        pos: { ...normalized.pos },
+        arrows: normalized.arrows.map((arrow) => ({
+          id: crypto.randomUUID(),
+          target: { ...arrow.target },
+        })),
+      };
+    }),
     ball: { ...source.ball },
   };
   boards.push(copy);

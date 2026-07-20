@@ -1,7 +1,8 @@
-import { useCallback } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { usePointerDrag } from '../hooks/usePointerDrag';
 import { toPxX, toPxY } from '../lib/svgCoords';
 import type { EditorMode, PlayerToken as PlayerTokenModel, Point } from '../types';
+import { MovementArrow } from './ArrowLayer';
 
 /** Classic user silhouette (head + shoulders), 20×20 viewBox. */
 const USER_ICON_PATH = 'M10 9a3 3 0 100-6 3 3 0 000 6zm-7 8a7 7 0 1114 0H3z';
@@ -14,8 +15,7 @@ interface PlayerTokenProps {
   highPercentageEnabled: boolean;
   isSelected: boolean;
   onMove: (pos: Point) => void;
-  onArrowUpdate: (target: Point) => void;
-  onArrowClear: () => void;
+  onArrowAdd: (target: Point) => void;
   onSelect: () => void;
 }
 
@@ -25,28 +25,29 @@ export function PlayerToken({
   highPercentageEnabled,
   isSelected,
   onMove,
-  onArrowUpdate,
-  onArrowClear,
+  onArrowAdd,
   onSelect,
 }: PlayerTokenProps) {
+  const [previewTarget, setPreviewTarget] = useState<Point | null>(null);
+
   const handleMove = useCallback(
     (point: Point) => {
       if (mode === 'move') onMove(point);
-      else onArrowUpdate(point);
+      else setPreviewTarget(point);
     },
-    [mode, onMove, onArrowUpdate],
+    [mode, onMove],
   );
 
   const handleEnd = useCallback(
-    (_point: Point, wasTap: boolean) => {
-      if (!wasTap) return;
-      if (mode === 'move') {
-        if (highPercentageEnabled) onSelect();
-      } else if (player.arrowTarget) {
-        onArrowClear();
+    (point: Point, wasTap: boolean) => {
+      if (mode === 'arrow') {
+        if (!wasTap) onArrowAdd(point);
+        setPreviewTarget(null);
+        return;
       }
+      if (wasTap && highPercentageEnabled) onSelect();
     },
-    [mode, highPercentageEnabled, onSelect, onArrowClear, player.arrowTarget],
+    [mode, highPercentageEnabled, onSelect, onArrowAdd],
   );
 
   const { onPointerDown, onPointerMove, onPointerUp } = usePointerDrag({ onMove: handleMove, onEnd: handleEnd });
@@ -62,6 +63,15 @@ export function PlayerToken({
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
+      {mode === 'arrow' && previewTarget && (
+        <MovementArrow
+          x1={cx}
+          y1={cy}
+          x2={toPxX(previewTarget.x)}
+          y2={toPxY(previewTarget.y)}
+          team={player.team}
+        />
+      )}
       <circle cx={cx} cy={cy} r={HIT_RADIUS} className="player-token-hit-area" />
       <g transform={`translate(${cx}, ${cy}) scale(${ICON_SCALE}) translate(-10, -10)`}>
         <path fillRule="evenodd" d={USER_ICON_PATH} className="player-icon-shape" />

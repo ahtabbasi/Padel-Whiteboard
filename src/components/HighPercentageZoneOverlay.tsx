@@ -1,4 +1,4 @@
-import { getHighPercentageTargets } from '../lib/highPercentageZone';
+import { getHighPercentageTriangleBisector, getHighPercentageZonePolygon } from '../lib/highPercentageZone';
 import { toPxX, toPxY } from '../lib/svgCoords';
 import type { PlayerToken } from '../types';
 
@@ -13,16 +13,21 @@ export function HighPercentageZoneOverlay({ players, selectedPlayerId, enabled }
   const player = players.find((p) => p.id === selectedPlayerId);
   if (!player) return null;
 
-  const [t1, t2] = getHighPercentageTargets(player.team, player.pos);
-  const points = [
-    `${toPxX(player.pos.x)},${toPxY(player.pos.y)}`,
-    `${toPxX(t1.x)},${toPxY(t1.y)}`,
-    `${toPxX(t2.x)},${toPxY(t2.y)}`,
-  ].join(' ');
+  const zonePoints = getHighPercentageZonePolygon(player.team, player.pos);
+  const points = zonePoints.map((p) => `${toPxX(p.x)},${toPxY(p.y)}`).join(' ');
+
+  const [bisectStart, bisectEnd] = getHighPercentageTriangleBisector(player.team, player.pos);
 
   return (
     <g className="high-percentage-zone-overlay">
       <polygon points={points} className={`high-percentage-zone high-percentage-zone-${player.team}`} />
+      <line
+        x1={toPxX(bisectStart.x)}
+        y1={toPxY(bisectStart.y)}
+        x2={toPxX(bisectEnd.x)}
+        y2={toPxY(bisectEnd.y)}
+        className={`high-percentage-bisector high-percentage-bisector-${player.team}`}
+      />
     </g>
   );
 }

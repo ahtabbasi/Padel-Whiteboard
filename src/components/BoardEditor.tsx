@@ -21,7 +21,7 @@ interface BoardEditorProps {
 }
 
 export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
-  const { board, movePlayer, setArrow, clearArrow, moveBall, resetPositions } = useBoardEditor(initialBoard);
+  const { board, movePlayer, addArrow, removeArrow, moveBall, resetPositions } = useBoardEditor(initialBoard);
   const { settings, toggle } = useDisplaySettings();
   const [mode, setMode] = useState<EditorMode>('move');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -62,15 +62,6 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
           className="court-svg"
           onPointerDown={handleCourtPointerDown}
         >
-          <defs>
-            <marker id="arrowhead-A" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
-              <path d="M0,0 L10,5 L0,10 Z" className="arrowhead arrowhead-A" />
-            </marker>
-            <marker id="arrowhead-B" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
-              <path d="M0,0 L10,5 L0,10 Z" className="arrowhead arrowhead-B" />
-            </marker>
-          </defs>
-
           <CourtSvg />
           {settings.showBorders && <BordersOverlay />}
           <ZonesOverlay settings={settings} />
@@ -80,7 +71,6 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
             selectedPlayerId={selectedPlayerId}
             enabled={settings.showHighPercentageZone}
           />
-          <ArrowLayer players={board.players} />
           {settings.showBall && <BallToken pos={board.ball} onMove={moveBall} />}
           {board.players.map((player) => (
             <PlayerToken
@@ -90,11 +80,11 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
               highPercentageEnabled={settings.showHighPercentageZone}
               isSelected={selectedPlayerId === player.id}
               onMove={(pos) => movePlayer(player.id, pos)}
-              onArrowUpdate={(target) => setArrow(player.id, target)}
-              onArrowClear={() => clearArrow(player.id)}
+              onArrowAdd={(target) => addArrow(player.id, target)}
               onSelect={() => handleSelect(player.id)}
             />
           ))}
+          <ArrowLayer players={board.players} onRemoveArrow={removeArrow} />
         </svg>
       </div>
 

@@ -59,7 +59,7 @@ export const BACK_WALL_GLASS_PANEL_COUNT = 5;
 export const GLASS_PANEL_GAP_M = 0.05;
 
 function makePlayer(id: string, team: PlayerToken['team'], pos: Point): PlayerToken {
-  return { id, team, pos };
+  return { id, team, pos, arrows: [] };
 }
 
 /** Midpoint between a team's back wall and their service line. */
