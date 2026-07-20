@@ -1,15 +1,17 @@
 :root {
-  --bg: #ffffff;
-  --surface: #f8fafc;
-  --surface-alt: #f1f5f9;
-  --border: #e2e8f0;
+  --bg: #b8bec6;
+  --surface: #d1d7de;
+  --surface-alt: #c5ccd4;
+  --border: #a3abb5;
   --text: #1e293b;
   --text-muted: #64748b;
   --accent: #2563eb;
   --accent-dark: #1d4ed8;
   --team-a: #eab308;
   --team-b: #ef4444;
-  --court-fill: #2563eb;
+  --court-fill: #243b5c;
+  --court-fill-center: #2f4a6e;
+  --court-fill-edge: #152a45;
   --line-white: #ffffff;
   --ball-green: #c6ef00;
   --no-man: #ef4444;
@@ -205,7 +207,7 @@ button {
   padding: 8px 12px;
   padding-top: max(8px, env(safe-area-inset-top));
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--surface);
 }
 
 .board-editor-title {
@@ -240,7 +242,19 @@ button {
 /* ---------- Court markings ---------- */
 
 .court-surface {
-  fill: var(--court-fill);
+  fill: url(#court-surface-light);
+}
+
+.court-surface-stop-center {
+  stop-color: var(--court-fill-center);
+}
+
+.court-surface-stop-base {
+  stop-color: var(--court-fill);
+}
+
+.court-surface-stop-edge {
+  stop-color: var(--court-fill-edge);
 }
 
 .court-outline {
@@ -250,8 +264,10 @@ button {
 }
 
 .net-line {
-  stroke: var(--line-white);
-  stroke-width: 6;
+  stroke: #94a3b8;
+  stroke-width: 3;
+  stroke-dasharray: 2 8;
+  stroke-linecap: round;
 }
 
 .service-line,
@@ -391,7 +407,7 @@ button {
   gap: 8px;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--surface);
 }
 
 .toolbar-modes {

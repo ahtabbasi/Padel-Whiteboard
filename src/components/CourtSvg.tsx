@@ -10,6 +10,13 @@ export function CourtSvg() {
 
   return (
     <g className="court-lines">
+      <defs>
+        <radialGradient id="court-surface-light" cx="50%" cy="50%" r="55%" fx="50%" fy="50%">
+          <stop offset="0%" className="court-surface-stop-center" />
+          <stop offset="38%" className="court-surface-stop-base" />
+          <stop offset="100%" className="court-surface-stop-edge" />
+        </radialGradient>
+      </defs>
       <rect x={0} y={0} width={COURT_VIEW_WIDTH} height={COURT_VIEW_HEIGHT} className="court-surface" />
       <rect x={0} y={0} width={COURT_VIEW_WIDTH} height={COURT_VIEW_HEIGHT} className="court-outline" />
       <line x1={0} y1={netYPx} x2={COURT_VIEW_WIDTH} y2={netYPx} className="net-line" />
