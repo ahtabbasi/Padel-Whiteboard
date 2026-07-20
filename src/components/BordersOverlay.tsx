@@ -2,15 +2,13 @@ import {
   BACK_WALL_GLASS_PANEL_COUNT,
   COURT_VIEW_HEIGHT,
   COURT_VIEW_WIDTH,
-  SIDE_ENTRANCE_Y0,
-  SIDE_ENTRANCE_Y1,
 } from '../lib/courtGeometry';
-import { toPxY } from '../lib/svgCoords';
 
 /** Visible thickness of walls in the top-down SVG view. */
 const GLASS_DEPTH = 8;
 const PANEL_GAP_PX = 3;
 const SIDE_GLASS_PANEL_COUNT = 2;
+const SIDE_FENCE_PANEL_COUNT = 6;
 
 interface PanelLayout {
   panelSize: number;
@@ -76,55 +74,44 @@ function SideGlassPanels({
   );
 }
 
-function SideFenceWithEntrance({
+function SideFencePanels({
   x,
-  fenceStartPx,
-  fenceEndPx,
-  entranceStartPx,
-  entranceEndPx,
+  y0,
+  panelSize,
 }: {
   x: number;
-  fenceStartPx: number;
-  fenceEndPx: number;
-  entranceStartPx: number;
-  entranceEndPx: number;
+  y0: number;
+  panelSize: number;
 }) {
-  const segments: { y: number; height: number }[] = [];
-
-  if (entranceStartPx > fenceStartPx) {
-    segments.push({ y: fenceStartPx, height: entranceStartPx - fenceStartPx });
-  }
-  if (fenceEndPx > entranceEndPx) {
-    segments.push({ y: entranceEndPx, height: fenceEndPx - entranceEndPx });
-  }
+  const gap = PANEL_GAP_PX;
 
   return (
     <>
-      {segments.map((segment, i) => (
-        <rect
-          key={i}
-          x={x}
-          y={segment.y}
-          width={GLASS_DEPTH}
-          height={segment.height}
-          className="wall-fence"
-        />
-      ))}
+      {Array.from({ length: SIDE_FENCE_PANEL_COUNT }, (_, i) => {
+        const y = y0 + i * (panelSize + gap);
+        return <rect key={i} x={x} y={y} width={GLASS_DEPTH} height={panelSize} className="wall-fence" />;
+      })}
     </>
   );
 }
 
+/** Side stack: 2 glass + 6 fence + 2 glass panels, each separated by the same gap. */
+function layoutSidePanels(): { panelSize: number; glassBlockDepth: number; fenceStartPx: number } {
+  const sidePanelCount = SIDE_GLASS_PANEL_COUNT * 2 + SIDE_FENCE_PANEL_COUNT;
+  const panelSize =
+    (COURT_VIEW_HEIGHT - (sidePanelCount - 1) * PANEL_GAP_PX) / sidePanelCount;
+  const glassBlockDepth = SIDE_GLASS_PANEL_COUNT * panelSize + PANEL_GAP_PX;
+  const fenceStartPx = glassBlockDepth + PANEL_GAP_PX;
+  return { panelSize, glassBlockDepth, fenceStartPx };
+}
+
 /**
  * Decorative walls: white glass panels (5 across each back wall, 2 per side end),
- * with a solid gray fence bar in the remaining side space toward the net.
+ * with segmented gray fence panels (same size and spacing as glass) toward the net.
  */
 export function BordersOverlay() {
   const backLayout = layoutPanels(COURT_VIEW_WIDTH, BACK_WALL_GLASS_PANEL_COUNT, PANEL_GAP_PX);
-  const glassBlockDepth = SIDE_GLASS_PANEL_COUNT * backLayout.panelSize + PANEL_GAP_PX;
-  const fenceStartPx = glassBlockDepth + PANEL_GAP_PX;
-  const fenceEndPx = COURT_VIEW_HEIGHT - glassBlockDepth - PANEL_GAP_PX;
-  const entranceStartPx = toPxY(SIDE_ENTRANCE_Y0);
-  const entranceEndPx = toPxY(SIDE_ENTRANCE_Y1);
+  const sideLayout = layoutSidePanels();
 
   return (
     <g className="borders-overlay">
@@ -133,15 +120,9 @@ export function BordersOverlay() {
 
       {[0, COURT_VIEW_WIDTH - GLASS_DEPTH].map((x) => (
         <g key={x}>
-          <SideGlassPanels x={x} anchor="top" panelSize={backLayout.panelSize} />
-          <SideGlassPanels x={x} anchor="bottom" panelSize={backLayout.panelSize} />
-          <SideFenceWithEntrance
-            x={x}
-            fenceStartPx={fenceStartPx}
-            fenceEndPx={fenceEndPx}
-            entranceStartPx={entranceStartPx}
-            entranceEndPx={entranceEndPx}
-          />
+          <SideGlassPanels x={x} anchor="top" panelSize={sideLayout.panelSize} />
+          <SideGlassPanels x={x} anchor="bottom" panelSize={sideLayout.panelSize} />
+          <SideFencePanels x={x} y0={sideLayout.fenceStartPx} panelSize={sideLayout.panelSize} />
         </g>
       ))}
     </g>

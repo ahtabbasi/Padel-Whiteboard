@@ -71,12 +71,6 @@ export const GLASS_PANEL_LENGTH_M = 2.995;
 export const BACK_WALL_GLASS_PANEL_COUNT = 5;
 export const GLASS_PANEL_GAP_M = 0.05;
 
-/** Side entrance opening width, centered on each sideline at the net. */
-export const SIDE_ENTRANCE_WIDTH_M = 1.05;
-const SIDE_ENTRANCE_HALF = SIDE_ENTRANCE_WIDTH_M / COURT_LENGTH_M / 2;
-export const SIDE_ENTRANCE_Y0 = NET_Y - SIDE_ENTRANCE_HALF;
-export const SIDE_ENTRANCE_Y1 = NET_Y + SIDE_ENTRANCE_HALF;
-
 function makePlayer(id: string, team: PlayerToken['team'], pos: Point): PlayerToken {
   return { id, team, pos, arrows: [] };
 }
