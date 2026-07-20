@@ -79,7 +79,7 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
               mode={mode}
               highPercentageEnabled={settings.showHighPercentageZone}
               isSelected={selectedPlayerId === player.id}
-              onMove={(pos) => movePlayer(player.id, pos)}
+              onMove={(pos) => movePlayer(player.id, pos, settings.moveTogether)}
               onArrowAdd={(target) => addArrow(player.id, target)}
               onSelect={() => handleSelect(player.id)}
             />

@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS: DisplaySettings = {
   showNoManZone: false,
   showBorders: true,
   showHighPercentageZone: false,
+  moveTogether: false,
 };
 
 export function loadSettings(): DisplaySettings {

@@ -1,14 +1,15 @@
 import {
   BACK_WALL_GLASS_PANEL_COUNT,
+  BORDER_PANEL_GAP_PX,
   COURT_VIEW_HEIGHT,
   COURT_VIEW_WIDTH,
+  layoutSidePanels,
+  SIDE_WALL_FENCE_PANEL_COUNT,
+  SIDE_WALL_GLASS_PANEL_COUNT,
 } from '../lib/courtGeometry';
 
 /** Visible thickness of walls in the top-down SVG view. */
 const GLASS_DEPTH = 8;
-const PANEL_GAP_PX = 3;
-const SIDE_GLASS_PANEL_COUNT = 2;
-const SIDE_FENCE_PANEL_COUNT = 6;
 
 interface PanelLayout {
   panelSize: number;
@@ -56,12 +57,12 @@ function SideGlassPanels({
   anchor: 'top' | 'bottom';
   panelSize: number;
 }) {
-  const gap = PANEL_GAP_PX;
+  const gap = BORDER_PANEL_GAP_PX;
   const ys =
     anchor === 'top'
-      ? Array.from({ length: SIDE_GLASS_PANEL_COUNT }, (_, i) => i * (panelSize + gap))
+      ? Array.from({ length: SIDE_WALL_GLASS_PANEL_COUNT }, (_, i) => i * (panelSize + gap))
       : Array.from(
-          { length: SIDE_GLASS_PANEL_COUNT },
+          { length: SIDE_WALL_GLASS_PANEL_COUNT },
           (_, i) => COURT_VIEW_HEIGHT - panelSize - i * (panelSize + gap),
         );
 
@@ -83,11 +84,11 @@ function SideFencePanels({
   y0: number;
   panelSize: number;
 }) {
-  const gap = PANEL_GAP_PX;
+  const gap = BORDER_PANEL_GAP_PX;
 
   return (
     <>
-      {Array.from({ length: SIDE_FENCE_PANEL_COUNT }, (_, i) => {
+      {Array.from({ length: SIDE_WALL_FENCE_PANEL_COUNT }, (_, i) => {
         const y = y0 + i * (panelSize + gap);
         return <rect key={i} x={x} y={y} width={GLASS_DEPTH} height={panelSize} className="wall-fence" />;
       })}
@@ -95,22 +96,12 @@ function SideFencePanels({
   );
 }
 
-/** Side stack: 2 glass + 6 fence + 2 glass panels, each separated by the same gap. */
-function layoutSidePanels(): { panelSize: number; glassBlockDepth: number; fenceStartPx: number } {
-  const sidePanelCount = SIDE_GLASS_PANEL_COUNT * 2 + SIDE_FENCE_PANEL_COUNT;
-  const panelSize =
-    (COURT_VIEW_HEIGHT - (sidePanelCount - 1) * PANEL_GAP_PX) / sidePanelCount;
-  const glassBlockDepth = SIDE_GLASS_PANEL_COUNT * panelSize + PANEL_GAP_PX;
-  const fenceStartPx = glassBlockDepth + PANEL_GAP_PX;
-  return { panelSize, glassBlockDepth, fenceStartPx };
-}
-
 /**
  * Decorative walls: white glass panels (5 across each back wall, 2 per side end),
  * with segmented gray fence panels (same size and spacing as glass) toward the net.
  */
 export function BordersOverlay() {
-  const backLayout = layoutPanels(COURT_VIEW_WIDTH, BACK_WALL_GLASS_PANEL_COUNT, PANEL_GAP_PX);
+  const backLayout = layoutPanels(COURT_VIEW_WIDTH, BACK_WALL_GLASS_PANEL_COUNT, BORDER_PANEL_GAP_PX);
   const sideLayout = layoutSidePanels();
 
   return (
@@ -120,9 +111,9 @@ export function BordersOverlay() {
 
       {[0, COURT_VIEW_WIDTH - GLASS_DEPTH].map((x) => (
         <g key={x}>
-          <SideGlassPanels x={x} anchor="top" panelSize={sideLayout.panelSize} />
-          <SideGlassPanels x={x} anchor="bottom" panelSize={sideLayout.panelSize} />
-          <SideFencePanels x={x} y0={sideLayout.fenceStartPx} panelSize={sideLayout.panelSize} />
+          <SideGlassPanels x={x} anchor="top" panelSize={sideLayout.panelSizePx} />
+          <SideGlassPanels x={x} anchor="bottom" panelSize={sideLayout.panelSizePx} />
+          <SideFencePanels x={x} y0={sideLayout.fenceStartPx} panelSize={sideLayout.panelSizePx} />
         </g>
       ))}
     </g>

@@ -25,8 +25,41 @@ export const HALF_COURT_LENGTH_M = COURT_LENGTH_M / 2;
 
 /** Service line: 3 m from the back wall (defensive zone ends here). */
 export const SERVICE_LINE_FROM_BACK_M = 3;
-/** No-man's land ends and volley/attack zone begins at 6.95 m from the back wall. */
-export const NO_MAN_ZONE_END_M = 6.95;
+
+/** Side-wall stack in BordersOverlay: 2 glass → 6 fence → 2 glass (per half). */
+export const SIDE_WALL_GLASS_PANEL_COUNT = 2;
+export const SIDE_WALL_FENCE_PANEL_COUNT = 6;
+/** Gap between adjacent border panels in the SVG overlay (px). */
+export const BORDER_PANEL_GAP_PX = 3;
+
+export interface SidePanelLayout {
+  panelSizePx: number;
+  glassBlockDepthPx: number;
+  fenceStartPx: number;
+  /** Distance from a back wall to the inner edge of the first fence panel (px). */
+  firstFenceEndPx: number;
+}
+
+/** Evenly distributes side-wall panels (2 glass + 6 fence + 2 glass) along the court length. */
+export function layoutSidePanels(): SidePanelLayout {
+  const sidePanelCount = SIDE_WALL_GLASS_PANEL_COUNT * 2 + SIDE_WALL_FENCE_PANEL_COUNT;
+  const panelSizePx =
+    (COURT_VIEW_HEIGHT - (sidePanelCount - 1) * BORDER_PANEL_GAP_PX) / sidePanelCount;
+  const glassBlockDepthPx = SIDE_WALL_GLASS_PANEL_COUNT * panelSizePx + BORDER_PANEL_GAP_PX;
+  const fenceStartPx = glassBlockDepthPx + BORDER_PANEL_GAP_PX;
+  const firstFenceEndPx = fenceStartPx + panelSizePx;
+  return { panelSizePx, glassBlockDepthPx, fenceStartPx, firstFenceEndPx };
+}
+
+/** Normalized y at the inner edge of the first fence panel (Team B / top back wall). */
+export function firstFenceEndYFromTopBackWall(): number {
+  return layoutSidePanels().firstFenceEndPx / COURT_VIEW_HEIGHT;
+}
+
+/** Normalized y at the inner edge of the first fence panel (Team A / bottom back wall). */
+export function firstFenceEndYFromBottomBackWall(): number {
+  return 1 - layoutSidePanels().firstFenceEndPx / COURT_VIEW_HEIGHT;
+}
 
 /** Normalized y for a distance in meters from the top (Team B) back wall. */
 export function metersFromTopBackWallToY(meters: number): number {
@@ -49,16 +82,13 @@ interface Band {
 }
 
 /**
- * No-man's land on each half: 3 m ≤ x < 6.95 m from the back wall
- * (service line through the transition zone toward the net).
+ * No-man's land on each half: from the service line (3 m from the back wall)
+ * to the inner edge of the first side-wall fence panel (same layout as BordersOverlay).
  */
 export function getNoManZoneBands(): Band[] {
-  const noManEndYFromTop = metersFromTopBackWallToY(NO_MAN_ZONE_END_M);
-  const noManEndYFromBottom = metersFromBottomBackWallToY(NO_MAN_ZONE_END_M);
-
   return [
-    { y0: SERVICE_LINE_B_Y, y1: noManEndYFromTop },
-    { y0: noManEndYFromBottom, y1: SERVICE_LINE_A_Y },
+    { y0: SERVICE_LINE_B_Y, y1: firstFenceEndYFromTopBackWall() },
+    { y0: firstFenceEndYFromBottomBackWall(), y1: SERVICE_LINE_A_Y },
   ];
 }
 
@@ -109,4 +139,16 @@ export function createNewBoard(name: string): Board {
 
 export function clamp01(value: number): number {
   return Math.min(1, Math.max(0, value));
+}
+
+/** Constrain a movement delta so two points moving together stay within [0,1]². */
+export function constrainMovementDelta(posA: Point, posB: Point, delta: Point): Point {
+  const minDx = Math.max(-posA.x, -posB.x);
+  const maxDx = Math.min(1 - posA.x, 1 - posB.x);
+  const minDy = Math.max(-posA.y, -posB.y);
+  const maxDy = Math.min(1 - posA.y, 1 - posB.y);
+  return {
+    x: Math.min(maxDx, Math.max(minDx, delta.x)),
+    y: Math.min(maxDy, Math.max(minDy, delta.y)),
+  };
 }

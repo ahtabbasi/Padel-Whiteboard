@@ -7,6 +7,7 @@ interface DisplaySettingsPanelProps {
 }
 
 const TOGGLES: { key: keyof DisplaySettings; label: string }[] = [
+  { key: 'moveTogether', label: 'Move together (team)' },
   { key: 'showBall', label: 'Ball' },
   { key: 'showBlackHoleTeamA', label: 'Black hole — Team A (yellow, bottom)' },
   { key: 'showBlackHoleTeamB', label: 'Black hole — Team B (red, top)' },

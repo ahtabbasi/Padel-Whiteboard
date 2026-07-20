@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import type { Board, Point } from '../types';
-import { clamp01, createDefaultBall, createDefaultPlayers } from '../lib/courtGeometry';
+import { clamp01, constrainMovementDelta, createDefaultBall, createDefaultPlayers } from '../lib/courtGeometry';
 import { normalizeBoard } from '../lib/normalizeBoard';
 import { saveBoard } from '../lib/storage';
 
@@ -35,12 +35,48 @@ export function useBoardEditor(initialBoard: Board) {
   }, []);
 
   const movePlayer = useCallback(
-    (id: string, pos: Point) => {
-      const clamped: Point = { x: clamp01(pos.x), y: clamp01(pos.y) };
-      updateBoard((b) => ({
-        ...b,
-        players: b.players.map((p) => (p.id === id ? { ...p, pos: clamped } : p)),
-      }));
+    (id: string, pos: Point, moveTogether = false) => {
+      updateBoard((b) => {
+        const dragged = b.players.find((p) => p.id === id);
+        if (!dragged) return b;
+
+        if (!moveTogether) {
+          const clamped: Point = { x: clamp01(pos.x), y: clamp01(pos.y) };
+          return {
+            ...b,
+            players: b.players.map((p) => (p.id === id ? { ...p, pos: clamped } : p)),
+          };
+        }
+
+        const teammate = b.players.find((p) => p.team === dragged.team && p.id !== id);
+        if (!teammate) {
+          const clamped: Point = { x: clamp01(pos.x), y: clamp01(pos.y) };
+          return {
+            ...b,
+            players: b.players.map((p) => (p.id === id ? { ...p, pos: clamped } : p)),
+          };
+        }
+
+        const desiredDelta = {
+          x: pos.x - dragged.pos.x,
+          y: pos.y - dragged.pos.y,
+        };
+        const delta = constrainMovementDelta(dragged.pos, teammate.pos, desiredDelta);
+
+        return {
+          ...b,
+          players: b.players.map((p) => {
+            if (p.id !== id && p.id !== teammate.id) return p;
+            return {
+              ...p,
+              pos: {
+                x: clamp01(p.pos.x + delta.x),
+                y: clamp01(p.pos.y + delta.y),
+              },
+            };
+          }),
+        };
+      });
     },
     [updateBoard],
   );

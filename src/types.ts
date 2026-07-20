@@ -38,4 +38,6 @@ export interface DisplaySettings {
   showNoManZone: boolean;
   showBorders: boolean;
   showHighPercentageZone: boolean;
+  /** When enabled, both players on a team move by the same delta. */
+  moveTogether: boolean;
 }
