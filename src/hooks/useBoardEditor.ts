@@ -7,20 +7,22 @@ const AUTOSAVE_DELAY_MS = 500;
 
 export function useBoardEditor(initialBoard: Board) {
   const [board, setBoard] = useState<Board>(initialBoard);
-  const [saved, setSaved] = useState(true);
   const timeoutRef = useRef<number | undefined>(undefined);
   const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    setBoard(initialBoard);
+    isFirstRender.current = true;
+  }, [initialBoard.id]);
 
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    setSaved(false);
     if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     timeoutRef.current = window.setTimeout(() => {
       saveBoard(board);
-      setSaved(true);
     }, AUTOSAVE_DELAY_MS);
     return () => {
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
@@ -36,7 +38,9 @@ export function useBoardEditor(initialBoard: Board) {
       const clamped: Point = { x: clamp01(pos.x), y: clamp01(pos.y) };
       updateBoard((b) => ({
         ...b,
-        players: b.players.map((p) => (p.id === id ? { ...p, pos: clamped } : p)),
+        players: b.players.map((p) =>
+          p.id === id ? { ...p, pos: clamped, arrowTarget: undefined } : p,
+        ),
       }));
     },
     [updateBoard],
@@ -79,5 +83,5 @@ export function useBoardEditor(initialBoard: Board) {
     }));
   }, [updateBoard]);
 
-  return { board, movePlayer, setArrow, clearArrow, moveBall, resetPositions, saved };
+  return { board, movePlayer, setArrow, clearArrow, moveBall, resetPositions };
 }

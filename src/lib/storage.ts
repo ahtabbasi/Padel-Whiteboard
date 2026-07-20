@@ -2,6 +2,7 @@ import type { Board } from '../types';
 import { createNewBoard } from './courtGeometry';
 
 const STORAGE_KEY = 'padel-whiteboard:boards:v1';
+const ACTIVE_BOARD_KEY = 'padel-whiteboard:active-board:v1';
 
 function readAll(): Board[] {
   try {
@@ -10,7 +11,6 @@ function readAll(): Board[] {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    // Corrupt or inaccessible storage: start fresh rather than crash the app.
     return [];
   }
 }
@@ -19,7 +19,7 @@ function writeAll(boards: Board[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(boards));
   } catch {
-    // Storage unavailable/full: silently no-op, nothing else we can do client-side only.
+    // Storage unavailable/full: silently no-op.
   }
 }
 
@@ -36,6 +36,7 @@ export function createBoard(name: string): Board {
   const boards = readAll();
   boards.push(board);
   writeAll(boards);
+  setActiveBoardId(board.id);
   return board;
 }
 
@@ -48,6 +49,7 @@ export function saveBoard(board: Board): void {
     boards[index] = board;
   }
   writeAll(boards);
+  setActiveBoardId(board.id);
 }
 
 export function renameBoard(id: string, name: string): void {
@@ -60,7 +62,15 @@ export function renameBoard(id: string, name: string): void {
 }
 
 export function deleteBoard(id: string): void {
-  writeAll(readAll().filter((b) => b.id !== id));
+  const remaining = readAll().filter((b) => b.id !== id);
+  writeAll(remaining);
+  if (getActiveBoardId() === id) {
+    if (remaining.length > 0) {
+      setActiveBoardId(remaining.sort((a, b) => b.updatedAt - a.updatedAt)[0].id);
+    } else {
+      clearActiveBoardId();
+    }
+  }
 }
 
 export function duplicateBoard(id: string): Board | undefined {
@@ -74,10 +84,53 @@ export function duplicateBoard(id: string): Board | undefined {
     name: `${source.name} (copy)`,
     createdAt: now,
     updatedAt: now,
-    players: source.players.map((p) => ({ ...p, pos: { ...p.pos }, arrowTarget: p.arrowTarget ? { ...p.arrowTarget } : undefined })),
+    players: source.players.map((p) => ({
+      ...p,
+      pos: { ...p.pos },
+      arrowTarget: p.arrowTarget ? { ...p.arrowTarget } : undefined,
+    })),
     ball: { ...source.ball },
   };
   boards.push(copy);
   writeAll(boards);
   return copy;
+}
+
+export function getActiveBoardId(): string | null {
+  try {
+    return localStorage.getItem(ACTIVE_BOARD_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setActiveBoardId(id: string): void {
+  try {
+    localStorage.setItem(ACTIVE_BOARD_KEY, id);
+  } catch {
+    // Storage unavailable: silently no-op.
+  }
+}
+
+function clearActiveBoardId(): void {
+  try {
+    localStorage.removeItem(ACTIVE_BOARD_KEY);
+  } catch {
+    // Storage unavailable: silently no-op.
+  }
+}
+
+/** Opens the last active board, the most recently edited board, or creates a new one. */
+export function resolveInitialBoard(): Board {
+  const activeId = getActiveBoardId();
+  if (activeId) {
+    const active = getBoard(activeId);
+    if (active) return active;
+  }
+  const boards = listBoards();
+  if (boards.length > 0) {
+    setActiveBoardId(boards[0].id);
+    return boards[0];
+  }
+  return createBoard('Board 1');
 }

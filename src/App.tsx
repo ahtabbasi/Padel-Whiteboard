@@ -1,14 +1,10 @@
 import { useState } from 'preact/hooks';
 import type { Board } from './types';
 import { BoardEditor } from './components/BoardEditor';
-import { BoardLibrary } from './components/BoardLibrary';
+import { resolveInitialBoard } from './lib/storage';
 
 export function App() {
-  const [openBoard, setOpenBoard] = useState<Board | null>(null);
+  const [activeBoard, setActiveBoard] = useState<Board>(() => resolveInitialBoard());
 
-  if (openBoard) {
-    return <BoardEditor initialBoard={openBoard} onBack={() => setOpenBoard(null)} />;
-  }
-
-  return <BoardLibrary onOpen={setOpenBoard} />;
+  return <BoardEditor key={activeBoard.id} initialBoard={activeBoard} onBoardChange={setActiveBoard} />;
 }

@@ -3,8 +3,9 @@ import { usePointerDrag } from '../hooks/usePointerDrag';
 import { toPxX, toPxY } from '../lib/svgCoords';
 import type { EditorMode, PlayerToken as PlayerTokenModel, Point } from '../types';
 
-const PLAYER_RADIUS = 15;
-/** Larger invisible circle so the touch target is comfortably tappable on phones. */
+/** Classic user silhouette (head + shoulders), 20×20 viewBox. */
+const USER_ICON_PATH = 'M10 9a3 3 0 100-6 3 3 0 000 6zm-7 8a7 7 0 1114 0H3z';
+const ICON_SCALE = 1.6;
 const HIT_RADIUS = 24;
 
 interface PlayerTokenProps {
@@ -62,8 +63,9 @@ export function PlayerToken({
       onPointerCancel={onPointerUp}
     >
       <circle cx={cx} cy={cy} r={HIT_RADIUS} className="player-token-hit-area" />
-      {isSelected && <circle cx={cx} cy={cy} r={PLAYER_RADIUS + 6} className="player-token-selection-ring" />}
-      <circle cx={cx} cy={cy} r={PLAYER_RADIUS} className="player-token-dot" />
+      <g transform={`translate(${cx}, ${cy}) scale(${ICON_SCALE}) translate(-10, -10)`}>
+        <path fillRule="evenodd" d={USER_ICON_PATH} className="player-icon-shape" />
+      </g>
     </g>
   );
 }

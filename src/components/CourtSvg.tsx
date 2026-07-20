@@ -15,7 +15,7 @@ export function CourtSvg() {
       <line x1={0} y1={netYPx} x2={COURT_VIEW_WIDTH} y2={netYPx} className="net-line" />
       <line x1={0} y1={serviceAYPx} x2={COURT_VIEW_WIDTH} y2={serviceAYPx} className="service-line" />
       <line x1={0} y1={serviceBYPx} x2={COURT_VIEW_WIDTH} y2={serviceBYPx} className="service-line" />
-      <line x1={centerXPx} y1={serviceAYPx} x2={centerXPx} y2={serviceBYPx} className="center-service-line" />
+      <line x1={centerXPx} y1={serviceBYPx} x2={centerXPx} y2={serviceAYPx} className="center-service-line" />
     </g>
   );
 }

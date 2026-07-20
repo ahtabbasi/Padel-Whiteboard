@@ -11,20 +11,24 @@ import { CourtSvg } from './CourtSvg';
 import { DisplaySettingsPanel } from './DisplaySettingsPanel';
 import { HighPercentageZoneOverlay } from './HighPercentageZoneOverlay';
 import { PlayerToken } from './PlayerToken';
+import { SideMenu, useSideMenuActions } from './SideMenu';
 import { Toolbar } from './Toolbar';
 import { ZonesOverlay } from './ZonesOverlay';
 
 interface BoardEditorProps {
   initialBoard: Board;
-  onBack: () => void;
+  onBoardChange: (board: Board) => void;
 }
 
-export function BoardEditor({ initialBoard, onBack }: BoardEditorProps) {
-  const { board, movePlayer, setArrow, clearArrow, moveBall, resetPositions, saved } = useBoardEditor(initialBoard);
+export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
+  const { board, movePlayer, setArrow, clearArrow, moveBall, resetPositions } = useBoardEditor(initialBoard);
   const { settings, toggle } = useDisplaySettings();
   const [mode, setMode] = useState<EditorMode>('move');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
+
+  const { boards, handleCreate, handleRename, handleDelete, handleDuplicate } = useSideMenuActions(onBoardChange);
 
   const handleModeChange = (nextMode: EditorMode) => {
     setMode(nextMode);
@@ -38,21 +42,24 @@ export function BoardEditor({ initialBoard, onBack }: BoardEditorProps) {
   return (
     <div className="board-editor">
       <header className="board-editor-header">
-        <button type="button" className="icon-button" onClick={onBack} aria-label="Back to library">
-          ←
+        <button type="button" className="icon-button hamburger-button" onClick={() => setMenuOpen(true)} aria-label="Open boards menu">
+          <span className="hamburger-icon" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
         </button>
         <span className="board-editor-title">{board.name}</span>
-        <span className={`saved-indicator${saved ? ' saved' : ''}`}>{saved ? 'Saved' : 'Saving…'}</span>
       </header>
 
       <div className="court-container">
         <svg viewBox={`0 0 ${COURT_VIEW_WIDTH} ${COURT_VIEW_HEIGHT}`} className="court-svg">
           <defs>
-            <marker id="arrowhead-A" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse">
-              <path d="M0,0 L8,4 L0,8 Z" className="arrowhead arrowhead-A" />
+            <marker id="arrowhead-A" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 Z" className="arrowhead arrowhead-A" />
             </marker>
-            <marker id="arrowhead-B" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse">
-              <path d="M0,0 L8,4 L0,8 Z" className="arrowhead arrowhead-B" />
+            <marker id="arrowhead-B" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 Z" className="arrowhead arrowhead-B" />
             </marker>
           </defs>
 
@@ -84,6 +91,21 @@ export function BoardEditor({ initialBoard, onBack }: BoardEditorProps) {
       </div>
 
       <Toolbar mode={mode} onModeChange={handleModeChange} onOpenSettings={() => setSettingsOpen(true)} onReset={resetPositions} />
+
+      <SideMenu
+        open={menuOpen}
+        boards={boards}
+        activeBoardId={board.id}
+        onClose={() => setMenuOpen(false)}
+        onSelect={onBoardChange}
+        onCreate={() => {
+          handleCreate();
+          setMenuOpen(false);
+        }}
+        onRename={handleRename}
+        onDuplicate={handleDuplicate}
+        onDelete={handleDelete}
+      />
 
       {settingsOpen && (
         <DisplaySettingsPanel settings={settings} onToggle={toggle} onClose={() => setSettingsOpen(false)} />
