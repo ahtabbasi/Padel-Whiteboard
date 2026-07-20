@@ -39,6 +39,10 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
     setSelectedPlayerId((prev) => (prev === id ? null : id));
   };
 
+  const handleCourtPointerDown = () => {
+    setSelectedPlayerId(null);
+  };
+
   return (
     <div className="board-editor">
       <header className="board-editor-header">
@@ -53,7 +57,11 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
       </header>
 
       <div className="court-container">
-        <svg viewBox={`0 0 ${COURT_VIEW_WIDTH} ${COURT_VIEW_HEIGHT}`} className="court-svg">
+        <svg
+          viewBox={`0 0 ${COURT_VIEW_WIDTH} ${COURT_VIEW_HEIGHT}`}
+          className="court-svg"
+          onPointerDown={handleCourtPointerDown}
+        >
           <defs>
             <marker id="arrowhead-A" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
               <path d="M0,0 L10,5 L0,10 Z" className="arrowhead arrowhead-A" />

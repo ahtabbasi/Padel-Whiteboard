@@ -8,8 +8,8 @@ interface DisplaySettingsPanelProps {
 
 const TOGGLES: { key: keyof DisplaySettings; label: string }[] = [
   { key: 'showBall', label: 'Ball' },
-  { key: 'showBlackHoleTeamA', label: 'Black hole — Team A (red, bottom)' },
-  { key: 'showBlackHoleTeamB', label: 'Black hole — Team B (yellow, top)' },
+  { key: 'showBlackHoleTeamA', label: 'Black hole — Team A (yellow, bottom)' },
+  { key: 'showBlackHoleTeamB', label: 'Black hole — Team B (red, top)' },
   { key: 'showAttackZone', label: 'Attack zone' },
   { key: 'showNoManZone', label: 'No-man zone' },
   { key: 'showDefenceZone', label: 'Defence zone' },

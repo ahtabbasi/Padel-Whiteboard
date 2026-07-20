@@ -5,8 +5,8 @@ import type { EditorMode, PlayerToken as PlayerTokenModel, Point } from '../type
 
 /** Classic user silhouette (head + shoulders), 20×20 viewBox. */
 const USER_ICON_PATH = 'M10 9a3 3 0 100-6 3 3 0 000 6zm-7 8a7 7 0 1114 0H3z';
-const ICON_SCALE = 1.6;
-const HIT_RADIUS = 24;
+const ICON_SCALE = 1.936;
+const HIT_RADIUS = 29;
 
 interface PlayerTokenProps {
   player: PlayerTokenModel;
