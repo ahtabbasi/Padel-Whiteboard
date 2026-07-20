@@ -1,27 +1,104 @@
-import { COURT_VIEW_HEIGHT, COURT_VIEW_WIDTH, SIDE_WALL_GLASS_END } from '../lib/courtGeometry';
-import { toPxY } from '../lib/svgCoords';
+import {
+  BACK_WALL_GLASS_PANEL_COUNT,
+  COURT_VIEW_HEIGHT,
+  COURT_VIEW_WIDTH,
+} from '../lib/courtGeometry';
+
+/** Visible thickness of walls in the top-down SVG view. */
+const GLASS_DEPTH = 8;
+const PANEL_GAP_PX = 3;
+const SIDE_GLASS_PANEL_COUNT = 2;
+
+interface PanelLayout {
+  panelSize: number;
+  gap: number;
+  count: number;
+  offset: number;
+}
+
+/** Evenly distributes `count` panels with gaps across `spanPx`, centered on the span. */
+function layoutPanels(spanPx: number, count: number, gapPx: number): PanelLayout {
+  const totalGap = (count - 1) * gapPx;
+  const panelSize = (spanPx - totalGap) / count;
+  const used = panelSize * count + totalGap;
+  const offset = (spanPx - used) / 2;
+  return { panelSize, gap: gapPx, count, offset };
+}
+
+function GlassPanelsHorizontal({
+  y,
+  height,
+  layout,
+}: {
+  y: number;
+  height: number;
+  layout: PanelLayout;
+}) {
+  const { panelSize, gap, count, offset } = layout;
+
+  return (
+    <>
+      {Array.from({ length: count }, (_, i) => {
+        const x = offset + i * (panelSize + gap);
+        return <rect key={i} x={x} y={y} width={panelSize} height={height} className="wall-glass" />;
+      })}
+    </>
+  );
+}
+
+function SideGlassPanels({
+  x,
+  anchor,
+  panelSize,
+}: {
+  x: number;
+  anchor: 'top' | 'bottom';
+  panelSize: number;
+}) {
+  const gap = PANEL_GAP_PX;
+  const ys =
+    anchor === 'top'
+      ? Array.from({ length: SIDE_GLASS_PANEL_COUNT }, (_, i) => i * (panelSize + gap))
+      : Array.from(
+          { length: SIDE_GLASS_PANEL_COUNT },
+          (_, i) => COURT_VIEW_HEIGHT - panelSize - i * (panelSize + gap),
+        );
+
+  return (
+    <>
+      {ys.map((y, i) => (
+        <rect key={i} x={x} y={y} width={GLASS_DEPTH} height={panelSize} className="wall-glass" />
+      ))}
+    </>
+  );
+}
 
 /**
- * Decorative wall representation: both back walls are fully glass; each side
- * wall is glass for the back ~2/3 (matching the back walls) and fence/mesh
- * for the front ~1/3 nearest the net. Purely cosmetic, no gameplay effect.
+ * Decorative walls: white glass panels (5 across each back wall, 2 per side end),
+ * with gray fence bars filling the remaining side space toward the net.
  */
 export function BordersOverlay() {
-  const glassEndTopPx = toPxY(SIDE_WALL_GLASS_END);
-  const glassStartBottomPx = toPxY(1 - SIDE_WALL_GLASS_END);
+  const backLayout = layoutPanels(COURT_VIEW_WIDTH, BACK_WALL_GLASS_PANEL_COUNT, PANEL_GAP_PX);
+  const glassBlockDepth = SIDE_GLASS_PANEL_COUNT * backLayout.panelSize + PANEL_GAP_PX;
+  const fenceStartPx = glassBlockDepth;
+  const fenceEndPx = COURT_VIEW_HEIGHT - glassBlockDepth;
 
   return (
     <g className="borders-overlay">
-      {/* Back walls: fully glass */}
-      <line x1={0} y1={0} x2={COURT_VIEW_WIDTH} y2={0} className="wall-glass" />
-      <line x1={0} y1={COURT_VIEW_HEIGHT} x2={COURT_VIEW_WIDTH} y2={COURT_VIEW_HEIGHT} className="wall-glass" />
+      <GlassPanelsHorizontal y={0} height={GLASS_DEPTH} layout={backLayout} />
+      <GlassPanelsHorizontal y={COURT_VIEW_HEIGHT - GLASS_DEPTH} height={GLASS_DEPTH} layout={backLayout} />
 
-      {/* Side walls: glass near each back wall, fence near the net */}
-      {[0, COURT_VIEW_WIDTH].map((x) => (
+      {[0, COURT_VIEW_WIDTH - GLASS_DEPTH].map((x) => (
         <g key={x}>
-          <line x1={x} y1={0} x2={x} y2={glassEndTopPx} className="wall-glass" />
-          <line x1={x} y1={glassEndTopPx} x2={x} y2={glassStartBottomPx} className="wall-fence" />
-          <line x1={x} y1={glassStartBottomPx} x2={x} y2={COURT_VIEW_HEIGHT} className="wall-glass" />
+          <SideGlassPanels x={x} anchor="top" panelSize={backLayout.panelSize} />
+          <SideGlassPanels x={x} anchor="bottom" panelSize={backLayout.panelSize} />
+          <rect
+            x={x}
+            y={fenceStartPx}
+            width={GLASS_DEPTH}
+            height={fenceEndPx - fenceStartPx}
+            className="wall-fence"
+          />
         </g>
       ))}
     </g>

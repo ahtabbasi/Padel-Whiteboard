@@ -279,16 +279,13 @@ button {
 /* ---------- Borders overlay ---------- */
 
 .wall-glass {
-  stroke: #93c5fd;
-  stroke-width: 6;
-  opacity: 0.7;
+  fill: #ffffff;
+  stroke: none;
 }
 
 .wall-fence {
-  stroke: #cbd5e1;
-  stroke-width: 6;
-  stroke-dasharray: 3 4;
-  opacity: 0.85;
+  fill: #94a3b8;
+  stroke: none;
 }
 
 /* ---------- Zones overlay ---------- */

@@ -50,6 +50,14 @@ export function getZoneBands(): { attack: Band[]; noMan: Band[]; defence: Band[]
 /** Fraction of each side wall (measured from each back wall inward) that is glass vs. fence. */
 export const SIDE_WALL_GLASS_END = 1 / 3;
 
+/** Standard panoramic padel court uses 18 glass panels (~2995×1995 mm). */
+export const COURT_LENGTH_M = 20;
+export const COURT_WIDTH_M = 10;
+export const GLASS_PANEL_WIDTH_M = 1.995;
+export const GLASS_PANEL_LENGTH_M = 2.995;
+export const BACK_WALL_GLASS_PANEL_COUNT = 5;
+export const GLASS_PANEL_GAP_M = 0.05;
+
 function makePlayer(id: string, team: PlayerToken['team'], pos: Point): PlayerToken {
   return { id, team, pos };
 }
