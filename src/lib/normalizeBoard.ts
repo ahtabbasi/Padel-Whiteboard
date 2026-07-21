@@ -26,6 +26,5 @@ export function normalizeBoard(board: Board): Board {
   return {
     ...board,
     players: board.players.map((player) => normalizePlayer(player as LegacyPlayer)),
-    ball: { ...board.ball },
   };
 }

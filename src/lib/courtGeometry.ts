@@ -121,10 +121,6 @@ export function createDefaultPlayers(): PlayerToken[] {
   ];
 }
 
-export function createDefaultBall(): Point {
-  return { x: 0.5, y: 0.5 };
-}
-
 export function createNewBoard(name: string): Board {
   const now = Date.now();
   return {
@@ -133,7 +129,6 @@ export function createNewBoard(name: string): Board {
     createdAt: now,
     updatedAt: now,
     players: createDefaultPlayers(),
-    ball: createDefaultBall(),
   };
 }
 

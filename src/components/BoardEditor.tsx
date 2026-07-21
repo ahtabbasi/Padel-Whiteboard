@@ -6,7 +6,6 @@ import { useMultiTap } from '../hooks/useMultiTap';
 import { usePwaInstall } from '../hooks/usePwaInstall';
 import { COURT_VIEW_HEIGHT, COURT_VIEW_WIDTH } from '../lib/courtGeometry';
 import { ArrowLayer } from './ArrowLayer';
-import { BallToken } from './BallToken';
 import { BlackHoleOverlay } from './BlackHoleOverlay';
 import { BordersOverlay } from './BordersOverlay';
 import { CourtSvg } from './CourtSvg';
@@ -26,7 +25,7 @@ interface BoardEditorProps {
 }
 
 export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
-  const { board, movePlayer, addArrow, removeArrow, moveBall, resetPositions } = useBoardEditor(initialBoard);
+  const { board, movePlayer, addArrow, removeArrow, resetPositions } = useBoardEditor(initialBoard);
   const { settings, toggle } = useDisplaySettings();
   const [mode, setMode] = useState<EditorMode>('move');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -105,7 +104,6 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
             selectedPlayerId={selectedPlayerId}
             enabled={settings.showHighPercentageZone}
           />
-          <BallToken pos={board.ball} onMove={moveBall} />
           {board.players.map((player) => (
             <PlayerToken
               key={player.id}

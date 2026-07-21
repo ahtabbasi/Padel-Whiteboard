@@ -14,7 +14,6 @@
   --court-fill-center: #0078d4;
   --court-fill-edge: #004a8f;
   --line-white: #ffffff;
-  --ball-green: #c6ef00;
   --no-man: #ef4444;
   --black-hole: #000000;
 
@@ -137,9 +136,8 @@ button {
 
 .side-menu-footer {
   flex-shrink: 0;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-  margin-top: 12px;
+  padding-top: 8px;
+  margin-top: 8px;
 }
 
 .board-list {
@@ -207,18 +205,20 @@ button {
 }
 
 .install-app-button {
+  display: block;
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 600;
+  padding: 8px 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
 }
 
 .install-app-button:active {
-  background: var(--surface);
+  color: var(--accent);
 }
 
 /* ---------- Board editor ---------- */
@@ -430,21 +430,6 @@ button {
 
 .player-token-selected .player-icon-shape {
   filter: brightness(1.12);
-}
-
-/* ---------- Ball token ---------- */
-
-.ball-token-group {
-  cursor: grab;
-}
-
-.ball-token-hit-area {
-  fill: transparent;
-}
-
-.ball-token {
-  fill: var(--ball-green);
-  pointer-events: none;
 }
 
 /* ---------- Toolbar ---------- */

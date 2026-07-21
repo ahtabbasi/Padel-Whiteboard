@@ -26,7 +26,6 @@ export interface Board {
   updatedAt: number;
   /** Always exactly 4 tokens: 2 team A, 2 team B. */
   players: PlayerToken[];
-  ball: Point;
 }
 
 export type EditorMode = 'move' | 'arrow';

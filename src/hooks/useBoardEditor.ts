@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import type { Board, Point } from '../types';
-import { clamp01, constrainMovementDelta, createDefaultBall, createDefaultPlayers } from '../lib/courtGeometry';
+import { clamp01, constrainMovementDelta, createDefaultPlayers } from '../lib/courtGeometry';
 import { normalizeBoard } from '../lib/normalizeBoard';
 import { saveBoard } from '../lib/storage';
 
@@ -111,21 +111,12 @@ export function useBoardEditor(initialBoard: Board) {
     [updateBoard],
   );
 
-  const moveBall = useCallback(
-    (pos: Point) => {
-      const clamped: Point = { x: clamp01(pos.x), y: clamp01(pos.y) };
-      updateBoard((b) => ({ ...b, ball: clamped }));
-    },
-    [updateBoard],
-  );
-
   const resetPositions = useCallback(() => {
     updateBoard((b) => ({
       ...b,
       players: createDefaultPlayers(),
-      ball: createDefaultBall(),
     }));
   }, [updateBoard]);
 
-  return { board, movePlayer, addArrow, removeArrow, moveBall, resetPositions };
+  return { board, movePlayer, addArrow, removeArrow, resetPositions };
 }

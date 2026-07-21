@@ -96,7 +96,6 @@ export function duplicateBoard(id: string): Board | undefined {
         })),
       };
     }),
-    ball: { ...source.ball },
   };
   boards.push(copy);
   writeAll(boards);
