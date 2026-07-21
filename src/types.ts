@@ -32,7 +32,6 @@ export interface Board {
 export type EditorMode = 'move' | 'arrow';
 
 export interface DisplaySettings {
-  showBall: boolean;
   showBlackHoleTeamA: boolean;
   showBlackHoleTeamB: boolean;
   showNoManZone: boolean;

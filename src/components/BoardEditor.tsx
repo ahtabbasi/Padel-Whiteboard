@@ -105,7 +105,7 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
             selectedPlayerId={selectedPlayerId}
             enabled={settings.showHighPercentageZone}
           />
-          {settings.showBall && <BallToken pos={board.ball} onMove={moveBall} />}
+          <BallToken pos={board.ball} onMove={moveBall} />
           {board.players.map((player) => (
             <PlayerToken
               key={player.id}

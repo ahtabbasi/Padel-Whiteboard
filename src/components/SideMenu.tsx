@@ -52,44 +52,48 @@ export function SideMenu({
           + New board
         </button>
 
-        {showInstallOption && onInstall && (
-          <button type="button" className="install-app-button" onClick={onInstall}>
-            Add to Home Screen
-          </button>
-        )}
+        <div className="side-menu-body">
+          {boards.length === 0 ? (
+            <p className="side-menu-empty">No saved boards yet.</p>
+          ) : (
+            <ul className="board-list">
+              {boards.map((board) => (
+                <li key={board.id} className={`board-list-item${board.id === activeBoardId ? ' board-list-item-active' : ''}`}>
+                  <button
+                    type="button"
+                    className="board-list-open"
+                    onClick={() => {
+                      setActiveBoardId(board.id);
+                      onSelect(board);
+                      onClose();
+                    }}
+                  >
+                    <span className="board-list-name">{board.name}</span>
+                    <span className="board-list-date">Edited {formatDate(board.updatedAt)}</span>
+                  </button>
+                  <div className="board-list-actions">
+                    <button type="button" className="icon-button" onClick={() => onRename(board)} aria-label="Rename">
+                      ✎
+                    </button>
+                    <button type="button" className="icon-button" onClick={() => onDuplicate(board)} aria-label="Duplicate">
+                      ⧉
+                    </button>
+                    <button type="button" className="icon-button" onClick={() => onDelete(board)} aria-label="Delete">
+                      🗑
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-        {boards.length === 0 ? (
-          <p className="side-menu-empty">No saved boards yet.</p>
-        ) : (
-          <ul className="board-list">
-            {boards.map((board) => (
-              <li key={board.id} className={`board-list-item${board.id === activeBoardId ? ' board-list-item-active' : ''}`}>
-                <button
-                  type="button"
-                  className="board-list-open"
-                  onClick={() => {
-                    setActiveBoardId(board.id);
-                    onSelect(board);
-                    onClose();
-                  }}
-                >
-                  <span className="board-list-name">{board.name}</span>
-                  <span className="board-list-date">Edited {formatDate(board.updatedAt)}</span>
-                </button>
-                <div className="board-list-actions">
-                  <button type="button" className="icon-button" onClick={() => onRename(board)} aria-label="Rename">
-                    ✎
-                  </button>
-                  <button type="button" className="icon-button" onClick={() => onDuplicate(board)} aria-label="Duplicate">
-                    ⧉
-                  </button>
-                  <button type="button" className="icon-button" onClick={() => onDelete(board)} aria-label="Delete">
-                    🗑
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+        {showInstallOption && onInstall && (
+          <div className="side-menu-footer">
+            <button type="button" className="install-app-button" onClick={onInstall}>
+              Add to Home Screen
+            </button>
+          </div>
         )}
       </aside>
     </div>

@@ -43,7 +43,8 @@ export function usePwaInstall() {
 
   const isMobile = isMobileDevice();
   const ios = isIos();
-  const canInstall = isMobile && !isInstalled && (!!deferredPrompt || ios);
+  const canInstall =
+    isMobile && !isInstalled && (!!deferredPrompt || ios);
   const showAutoPrompt =
     canInstall && canShowAutoPrompt() && !bannerDismissed;
 
@@ -107,7 +108,7 @@ export function usePwaInstall() {
   }, []);
 
   return {
-    showInstallOption: canInstall,
+    showInstallOption: isMobile,
     showAutoPrompt,
     install,
     dismissAutoPrompt,

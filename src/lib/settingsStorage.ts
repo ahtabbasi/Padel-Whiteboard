@@ -3,7 +3,6 @@ import type { DisplaySettings } from '../types';
 const SETTINGS_KEY = 'padel-whiteboard:settings:v1';
 
 export const DEFAULT_SETTINGS: DisplaySettings = {
-  showBall: true,
   showBlackHoleTeamA: false,
   showBlackHoleTeamB: false,
   showNoManZone: false,
