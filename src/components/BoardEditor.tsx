@@ -2,6 +2,8 @@ import { useState } from 'preact/hooks';
 import type { Board, EditorMode } from '../types';
 import { useBoardEditor } from '../hooks/useBoardEditor';
 import { useDisplaySettings } from '../hooks/useDisplaySettings';
+import { useMultiTap } from '../hooks/useMultiTap';
+import { usePwaInstall } from '../hooks/usePwaInstall';
 import { COURT_VIEW_HEIGHT, COURT_VIEW_WIDTH } from '../lib/courtGeometry';
 import { ArrowLayer } from './ArrowLayer';
 import { BallToken } from './BallToken';
@@ -10,8 +12,11 @@ import { BordersOverlay } from './BordersOverlay';
 import { CourtSvg } from './CourtSvg';
 import { DisplaySettingsPanel } from './DisplaySettingsPanel';
 import { HighPercentageZoneOverlay } from './HighPercentageZoneOverlay';
+import { InstallInstructionsSheet } from './InstallInstructionsSheet';
+import { InstallPromptBanner } from './InstallPromptBanner';
 import { PlayerToken } from './PlayerToken';
 import { SideMenu, useSideMenuActions } from './SideMenu';
+import { Toast } from './Toast';
 import { Toolbar } from './Toolbar';
 import { ZonesOverlay } from './ZonesOverlay';
 
@@ -27,6 +32,29 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
+
+  const {
+    showInstallOption,
+    showAutoPrompt,
+    install,
+    dismissAutoPrompt,
+    resetPromptState,
+    iosInstructionsOpen,
+    closeIosInstructions,
+    toastMessage,
+    clearToast,
+  } = usePwaInstall();
+
+  const { onTap: onTitleTap } = useMultiTap({
+    requiredTaps: 5,
+    windowMs: 5000,
+    onTrigger: resetPromptState,
+  });
+
+  const handleInstall = () => {
+    setMenuOpen(false);
+    void install();
+  };
 
   const { boards, handleCreate, handleRename, handleDelete, handleDuplicate } = useSideMenuActions(onBoardChange);
 
@@ -53,8 +81,14 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
             <span />
           </span>
         </button>
-        <span className="board-editor-title">{board.name}</span>
+        <button type="button" className="board-editor-title" onClick={onTitleTap}>
+          {board.name}
+        </button>
       </header>
+
+      {showAutoPrompt && (
+        <InstallPromptBanner onInstall={install} onDismiss={dismissAutoPrompt} />
+      )}
 
       <div className="court-container">
         <svg
@@ -94,6 +128,8 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
         open={menuOpen}
         boards={boards}
         activeBoardId={board.id}
+        showInstallOption={showInstallOption}
+        onInstall={handleInstall}
         onClose={() => setMenuOpen(false)}
         onSelect={onBoardChange}
         onCreate={() => {
@@ -108,6 +144,10 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
       {settingsOpen && (
         <DisplaySettingsPanel settings={settings} onToggle={toggle} onClose={() => setSettingsOpen(false)} />
       )}
+
+      {iosInstructionsOpen && <InstallInstructionsSheet onClose={closeIosInstructions} />}
+
+      {toastMessage && <Toast message={toastMessage} onDismiss={clearToast} />}
     </div>
   );
 }

@@ -6,6 +6,8 @@ interface SideMenuProps {
   open: boolean;
   boards: Board[];
   activeBoardId: string;
+  showInstallOption?: boolean;
+  onInstall?: () => void;
   onClose: () => void;
   onSelect: (board: Board) => void;
   onCreate: () => void;
@@ -25,6 +27,8 @@ export function SideMenu({
   open,
   boards,
   activeBoardId,
+  showInstallOption = false,
+  onInstall,
   onClose,
   onSelect,
   onCreate,
@@ -47,6 +51,12 @@ export function SideMenu({
         <button type="button" className="new-board-button" onClick={onCreate}>
           + New board
         </button>
+
+        {showInstallOption && onInstall && (
+          <button type="button" className="install-app-button" onClick={onInstall}>
+            Add to Home Screen
+          </button>
+        )}
 
         {boards.length === 0 ? (
           <p className="side-menu-empty">No saved boards yet.</p>
