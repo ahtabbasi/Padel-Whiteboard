@@ -10,13 +10,13 @@ export default defineConfig({
     preact(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.png', 'favicon-32.png'],
       manifest: {
         name: 'Padel Whiteboard',
         short_name: 'Padel Whiteboard',
         description: 'A mobile-friendly padel tactics board for planning plays and positioning.',
         theme_color: '#ffffff',
-        background_color: '#ffffff',
+        background_color: '#000000',
         display: 'standalone',
         orientation: 'portrait',
         start_url: './',

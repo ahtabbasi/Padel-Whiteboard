@@ -642,3 +642,30 @@ button {
     transform: translateY(0);
   }
 }
+
+/* ---------- Splash screen ---------- */
+
+.splash-screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: #000000;
+  padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
+}
+
+.splash-screen-icon {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+}
+
+.splash-screen-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
