@@ -1129,20 +1129,33 @@ button {
 
 .t-match-teams {
   display: grid;
-  gap: 8px;
+  gap: 0;
   min-width: 0;
 }
 
 .t-match-scores {
   display: grid;
   gap: 8px;
+  align-self: stretch;
+  align-content: center;
 }
 
 .t-team-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: stretch;
+  gap: 10px;
   min-width: 0;
+  padding: 9px 0;
+}
+
+.t-team-row + .t-team-row {
+  border-top: 1px solid color-mix(in srgb, var(--t-text) 12%, transparent);
+}
+
+.t-team-indicator {
+  width: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .t-team-dot {
@@ -1155,6 +1168,9 @@ button {
 
 .t-team-row-text {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .t-team-row-name {
@@ -1314,6 +1330,80 @@ button {
   font-family: 'Space Mono', monospace;
   color: var(--t-accent);
   font-weight: 700;
+}
+
+/* Match history (results page) */
+
+.t-match-history {
+  margin-top: 24px;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.t-match-history-round {
+  border-top: 1px solid var(--t-border-soft);
+}
+
+.t-match-history-round-label {
+  padding: 10px 16px 6px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--t-text-faint);
+}
+
+.t-match-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--t-border-soft);
+}
+
+.t-match-history-teams {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.t-match-history-team {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 38%;
+}
+
+.t-match-history-team-won {
+  font-weight: 700;
+  color: var(--t-accent);
+}
+
+.t-match-history-vs {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--t-text-faint);
+}
+
+.t-match-history-score {
+  flex-shrink: 0;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--t-text);
+}
+
+.t-match-history-score-pending {
+  color: var(--t-text-faint);
+  font-weight: 400;
 }
 
 /* Reset modal */

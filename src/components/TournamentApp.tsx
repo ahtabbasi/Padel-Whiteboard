@@ -125,7 +125,14 @@ export function TournamentApp({ onHome }: TournamentAppProps) {
           />
         )}
 
-        {phase === 'results' && <TournamentResults standings={standings} teamColor={teamColor} />}
+        {phase === 'results' && (
+          <TournamentResults
+            standings={standings}
+            matches={matches}
+            teamById={teamById}
+            teamColor={teamColor}
+          />
+        )}
       </div>
 
       {showResetModal && <TournamentResetModal onCancel={cancelReset} onConfirm={confirmReset} />}

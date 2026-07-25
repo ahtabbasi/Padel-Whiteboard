@@ -90,7 +90,7 @@ function MatchCard({
 function TeamRow({ team, color, won }: { team: TournamentTeam | undefined; color: string; won: boolean }) {
   return (
     <div className="t-team-row">
-      <span className="t-team-dot" style={{ background: color }} />
+      <span className="t-team-indicator" style={{ background: color }} />
       <div className="t-team-row-text">
         <div className={`t-team-row-name${won ? ' t-team-row-name-won' : ''}`}>{team ? team.name : '—'}</div>
         <div className="t-team-row-players">{team ? `${team.p1} / ${team.p2}` : ''}</div>

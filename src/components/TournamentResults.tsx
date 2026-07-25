@@ -1,11 +1,14 @@
-import type { TournamentStanding } from '../types';
+import type { TournamentMatch, TournamentStanding, TournamentTeam } from '../types';
+import { matchResult } from '../lib/tournament';
 
 interface TournamentResultsProps {
   standings: TournamentStanding[];
+  matches: TournamentMatch[];
+  teamById: (id: string) => TournamentTeam | undefined;
   teamColor: (id: string) => string;
 }
 
-export function TournamentResults({ standings, teamColor }: TournamentResultsProps) {
+export function TournamentResults({ standings, matches, teamById, teamColor }: TournamentResultsProps) {
   const champion = standings[0];
   const runnerUp = standings[1];
   const third = standings[2];
@@ -32,6 +35,9 @@ export function TournamentResults({ standings, teamColor }: TournamentResultsPro
       )}
 
       <StandingsBoard standings={standings} />
+      {anyPlayed && (
+        <MatchHistoryList matches={matches} teamById={teamById} teamColor={teamColor} />
+      )}
     </div>
   );
 }
@@ -70,6 +76,90 @@ function StandingsBoard({ standings }: { standings: TournamentStanding[] }) {
         </table>
       </div>
     </div>
+  );
+}
+
+function MatchHistoryList({
+  matches,
+  teamById,
+  teamColor,
+}: {
+  matches: TournamentMatch[];
+  teamById: (id: string) => TournamentTeam | undefined;
+  teamColor: (id: string) => string;
+}) {
+  const rounds = Array.from(new Set(matches.map((m) => m.round))).sort((a, b) => a - b);
+
+  return (
+    <div className="t-match-history">
+      <div className="t-standings-header">
+        <MatchesIcon />
+        <span>All matches</span>
+      </div>
+      {rounds.map((round) => (
+        <div key={round} className="t-match-history-round">
+          <div className="t-match-history-round-label">Round {round}</div>
+          {matches
+            .filter((m) => m.round === round)
+            .map((match) => (
+              <MatchHistoryRow
+                key={match.id}
+                match={match}
+                teamA={teamById(match.teamA)}
+                teamB={teamById(match.teamB)}
+                colorA={teamColor(match.teamA)}
+                colorB={teamColor(match.teamB)}
+              />
+            ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MatchHistoryRow({
+  match,
+  teamA,
+  teamB,
+  colorA,
+  colorB,
+}: {
+  match: TournamentMatch;
+  teamA: TournamentTeam | undefined;
+  teamB: TournamentTeam | undefined;
+  colorA: string;
+  colorB: string;
+}) {
+  const result = matchResult(match);
+  const scoreLabel = result.played ? `${result.aGames} – ${result.bGames}` : '—';
+
+  return (
+    <div className="t-match-history-row">
+      <div className="t-match-history-teams">
+        <span className="t-team-dot" style={{ background: colorA }} />
+        <span className={`t-match-history-team${result.winner === 'a' ? ' t-match-history-team-won' : ''}`}>
+          {teamA ? teamA.name : '—'}
+        </span>
+        <span className="t-match-history-vs">vs</span>
+        <span className={`t-match-history-team${result.winner === 'b' ? ' t-match-history-team-won' : ''}`}>
+          {teamB ? teamB.name : '—'}
+        </span>
+        <span className="t-team-dot" style={{ background: colorB }} />
+      </div>
+      <span className={`t-match-history-score${result.played ? '' : ' t-match-history-score-pending'}`}>
+        {scoreLabel}
+      </span>
+    </div>
+  );
+}
+
+function MatchesIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="t-trophy-icon">
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+      <line x1="10" y1="4" x2="10" y2="22" />
+    </svg>
   );
 }
 
