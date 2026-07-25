@@ -1148,10 +1148,6 @@ button {
   padding: 9px 0;
 }
 
-.t-team-row + .t-team-row {
-  border-top: 1px solid color-mix(in srgb, var(--t-text) 12%, transparent);
-}
-
 .t-team-indicator {
   width: 3px;
   border-radius: 2px;

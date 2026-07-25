@@ -37,9 +37,8 @@ mobile experience — the toolbar sits at the bottom for thumb reach.
 
 ## How it works
 
-- **Home**: pick a tool — Strategist or Tournament. The last tool you used
-  is remembered on relaunch; a home icon in each tool's header brings you
-  back here.
+- **Home**: pick a tool — Strategist or Tournament. A home icon in each
+  tool's header brings you back here.
 - **Strategist**:
   - The home screen for this tool lists your saved boards (local storage
     only, a handful of boards is the expected scale). Create, rename,

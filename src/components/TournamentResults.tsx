@@ -36,7 +36,7 @@ export function TournamentResults({ standings, matches, teamById, teamColor }: T
 
       <StandingsBoard standings={standings} />
       {anyPlayed && (
-        <MatchHistoryList matches={matches} teamById={teamById} teamColor={teamColor} />
+        <MatchHistoryList matches={matches} teamById={teamById} />
       )}
     </div>
   );
@@ -82,11 +82,9 @@ function StandingsBoard({ standings }: { standings: TournamentStanding[] }) {
 function MatchHistoryList({
   matches,
   teamById,
-  teamColor,
 }: {
   matches: TournamentMatch[];
   teamById: (id: string) => TournamentTeam | undefined;
-  teamColor: (id: string) => string;
 }) {
   const rounds = Array.from(new Set(matches.map((m) => m.round))).sort((a, b) => a - b);
 
@@ -107,8 +105,6 @@ function MatchHistoryList({
                 match={match}
                 teamA={teamById(match.teamA)}
                 teamB={teamById(match.teamB)}
-                colorA={teamColor(match.teamA)}
-                colorB={teamColor(match.teamB)}
               />
             ))}
         </div>
@@ -121,14 +117,10 @@ function MatchHistoryRow({
   match,
   teamA,
   teamB,
-  colorA,
-  colorB,
 }: {
   match: TournamentMatch;
   teamA: TournamentTeam | undefined;
   teamB: TournamentTeam | undefined;
-  colorA: string;
-  colorB: string;
 }) {
   const result = matchResult(match);
   const scoreLabel = result.played ? `${result.aGames} – ${result.bGames}` : '—';
@@ -136,7 +128,6 @@ function MatchHistoryRow({
   return (
     <div className="t-match-history-row">
       <div className="t-match-history-teams">
-        <span className="t-team-dot" style={{ background: colorA }} />
         <span className={`t-match-history-team${result.winner === 'a' ? ' t-match-history-team-won' : ''}`}>
           {teamA ? teamA.name : '—'}
         </span>
@@ -144,7 +135,6 @@ function MatchHistoryRow({
         <span className={`t-match-history-team${result.winner === 'b' ? ' t-match-history-team-won' : ''}`}>
           {teamB ? teamB.name : '—'}
         </span>
-        <span className="t-team-dot" style={{ background: colorB }} />
       </div>
       <span className={`t-match-history-score${result.played ? '' : ' t-match-history-score-pending'}`}>
         {scoreLabel}
