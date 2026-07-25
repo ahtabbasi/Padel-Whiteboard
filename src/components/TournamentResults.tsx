@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import type { TournamentMatch, TournamentStanding, TournamentTeam } from '../types';
 import { matchResult } from '../lib/tournament';
 
@@ -86,29 +87,37 @@ function MatchHistoryList({
   matches: TournamentMatch[];
   teamById: (id: string) => TournamentTeam | undefined;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const rounds = Array.from(new Set(matches.map((m) => m.round))).sort((a, b) => a - b);
 
   return (
     <div className="t-match-history">
-      <div className="t-standings-header">
+      <button
+        type="button"
+        className={`t-match-history-header${expanded ? ' t-match-history-header-expanded' : ''}`}
+        onClick={() => setExpanded((prev) => !prev)}
+        aria-expanded={expanded}
+      >
         <MatchesIcon />
         <span>All matches</span>
-      </div>
-      {rounds.map((round) => (
-        <div key={round} className="t-match-history-round">
-          <div className="t-match-history-round-label">Round {round}</div>
-          {matches
-            .filter((m) => m.round === round)
-            .map((match) => (
-              <MatchHistoryRow
-                key={match.id}
-                match={match}
-                teamA={teamById(match.teamA)}
-                teamB={teamById(match.teamB)}
-              />
-            ))}
-        </div>
-      ))}
+        <ChevronIcon expanded={expanded} />
+      </button>
+      {expanded &&
+        rounds.map((round) => (
+          <div key={round} className="t-match-history-round">
+            <div className="t-match-history-round-label">Round {round}</div>
+            {matches
+              .filter((m) => m.round === round)
+              .map((match) => (
+                <MatchHistoryRow
+                  key={match.id}
+                  match={match}
+                  teamA={teamById(match.teamA)}
+                  teamB={teamById(match.teamB)}
+                />
+              ))}
+          </div>
+        ))}
     </div>
   );
 }
@@ -149,6 +158,24 @@ function MatchesIcon() {
       <rect x="3" y="4" width="18" height="18" rx="2" />
       <line x1="3" y1="10" x2="21" y2="10" />
       <line x1="10" y1="4" x2="10" y2="22" />
+    </svg>
+  );
+}
+
+function ChevronIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className={`t-match-history-chevron${expanded ? ' t-match-history-chevron-expanded' : ''}`}
+    >
+      <polyline points="6 9 12 15 18 9" />
     </svg>
   );
 }

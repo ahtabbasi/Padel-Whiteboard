@@ -1338,6 +1338,37 @@ button {
   overflow: hidden;
 }
 
+.t-match-history-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--t-text-muted);
+  text-align: left;
+}
+
+.t-match-history-header-expanded {
+  border-bottom: 1px solid var(--t-border);
+}
+
+.t-match-history-chevron {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--t-text-faint);
+  transition: transform 0.15s ease;
+}
+
+.t-match-history-chevron-expanded {
+  transform: rotate(180deg);
+}
+
 .t-match-history-round {
   border-top: 1px solid var(--t-border-soft);
 }
