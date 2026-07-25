@@ -22,9 +22,10 @@ import { ZonesOverlay } from './ZonesOverlay';
 interface BoardEditorProps {
   initialBoard: Board;
   onBoardChange: (board: Board) => void;
+  onHome: () => void;
 }
 
-export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
+export function BoardEditor({ initialBoard, onBoardChange, onHome }: BoardEditorProps) {
   const { board, movePlayer, addArrow, removeArrow, resetPositions } = useBoardEditor(initialBoard);
   const { settings, toggle } = useDisplaySettings();
   const [mode, setMode] = useState<EditorMode>('move');
@@ -73,6 +74,12 @@ export function BoardEditor({ initialBoard, onBoardChange }: BoardEditorProps) {
   return (
     <div className="board-editor">
       <header className="board-editor-header">
+        <button type="button" className="icon-button" onClick={onHome} aria-label="Back to home">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 11 9-8 9 8" />
+            <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
+          </svg>
+        </button>
         <button type="button" className="icon-button hamburger-button" onClick={() => setMenuOpen(true)} aria-label="Open boards menu">
           <span className="hamburger-icon" aria-hidden="true">
             <span />

@@ -1,11 +1,19 @@
-# Padel Whiteboard
+# Padel Buddy
 
-A mobile-friendly padel tactics board. Drag the four players and the ball
-around a to-scale doubles court, draw a movement arrow from any player, and
-toggle overlays like zones, borders, the "black hole", and each player's
-high-percentage shot zone. Everything runs entirely in the browser — there is
-no backend or account system; boards are saved to that browser's local
-storage only.
+A mobile-friendly padel companion with two tools you can switch between from
+a home screen:
+
+- **Strategist** — a tactics whiteboard. Drag the four players around a
+  to-scale doubles court, draw a movement arrow from any player, and toggle
+  overlays like zones, borders, the "black hole", and each player's
+  high-percentage shot zone.
+- **Tournament** — a round-robin organizer for a padel night. Set up teams
+  (manually or by shuffling a list of players into random pairs), generate a
+  full round-robin schedule, enter match scores, and see live standings and a
+  podium.
+
+Everything runs entirely in the browser — there is no backend or account
+system; all data is saved to that browser's local storage only.
 
 ## Tech stack
 
@@ -29,35 +37,52 @@ mobile experience — the toolbar sits at the bottom for thumb reach.
 
 ## How it works
 
-- **Library**: the home screen lists your saved boards (local storage only,
-  a handful of boards is the expected scale). Create, rename, duplicate, or
-  delete a board from here.
-- **Editor**:
-  - **Move mode** (default): drag any of the 4 player dots or the ball
-    anywhere on the court.
+- **Home**: pick a tool — Strategist or Tournament. The last tool you used
+  is remembered on relaunch; a home icon in each tool's header brings you
+  back here.
+- **Strategist**:
+  - The home screen for this tool lists your saved boards (local storage
+    only, a handful of boards is the expected scale). Create, rename,
+    duplicate, or delete a board from here.
+  - **Move mode** (default): drag any of the 4 player dots anywhere on the
+    court.
   - **Arrow mode**: drag from a player outward to set their single
     movement arrow (dragging again replaces it); tap a player that already
     has an arrow to clear it. An arrow always starts at its player's current
     position, so moving the player in Move mode carries the arrow with it.
   - **Reset**: restores the default starting formation.
-  - **Display**: a panel of toggles — ball visibility, each team's "black
-    hole" (the midpoint between their two players), the attack / no-man /
-    defence zones, glass vs. fence border styling, and the high-percentage
-    shot zone. These are global settings shared across all boards.
+  - **Display**: a panel of toggles — each team's "black hole" (the
+    midpoint between their two players), the attack / no-man / defence
+    zones, glass vs. fence border styling, and the high-percentage shot
+    zone. These are global settings shared across all boards.
   - **High-percentage shot zone**: when enabled, tap a player (in Move mode,
     without dragging) to highlight a triangle from them to two points on the
     opponent's side. At their own back wall the targets are the opponent's
     two back corners; as they move toward the net the targets slide toward
     the net line, so right at the net the highlight sweeps the full width of
     the opponent's court. See `src/lib/highPercentageZone.ts`.
-- Boards autosave to local storage ~500ms after your last change (see the
-  "Saved" indicator in the header). Display settings save immediately.
+  - Boards autosave to local storage ~500ms after your last change. Display
+    settings save immediately.
+- **Tournament**:
+  - **Setup**: add 3–16 teams manually (name + two players each), or switch
+    to "Random shuffle" to list everyone playing and randomly pair them into
+    teams.
+  - **Schedule**: generating the schedule uses the round-robin circle method
+    so every team plays every other team exactly once. Round tabs show a
+    checkmark once every match in that round has scores entered.
+  - **Scores & standings**: enter games won per side on each match; the
+    standings table ranks teams by total games won, then by wins. Switch to
+    the Results view for a podium (top 3) plus the full standings table.
+  - **Reset**: clears teams, scores, and progress (with a confirmation
+    prompt).
+  - State autosaves to local storage on every change.
 
 ## Data model
 
-All positions are stored as normalized `{ x, y }` coordinates (0..1) so the
-court renders correctly at any screen size. See `src/types.ts` for the full
-shape of a `Board` and `DisplaySettings`.
+All whiteboard positions are stored as normalized `{ x, y }` coordinates
+(0..1) so the court renders correctly at any screen size. See `src/types.ts`
+for the full shape of a `Board`, `DisplaySettings`, and the tournament types
+(`TournamentTeam`, `TournamentMatch`, `TournamentState`).
 
 ## Deployment
 

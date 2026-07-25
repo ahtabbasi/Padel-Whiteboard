@@ -13,7 +13,7 @@ export function InstallPromptBanner({ onInstall, onDismiss }: InstallPromptBanne
         width={32}
         height={32}
       />
-      <span className="install-prompt-text">Install Padel Whiteboard?</span>
+      <span className="install-prompt-text">Install Padel Buddy?</span>
       <button type="button" className="install-prompt-action" onClick={onInstall}>
         Install
       </button>

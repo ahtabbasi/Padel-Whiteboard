@@ -1,4 +1,4 @@
-const APP_NAME = 'Padel Whiteboard';
+const APP_NAME = 'Padel Buddy';
 
 export function SplashScreen() {
   return (

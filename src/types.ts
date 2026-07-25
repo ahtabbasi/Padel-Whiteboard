@@ -39,3 +39,42 @@ export interface DisplaySettings {
   /** When enabled, both players on a team move by the same delta. */
   moveTogether: boolean;
 }
+
+/** Identifies which mini-app is currently active from the home launcher. */
+export type AppId = 'strategist' | 'tournament';
+
+export type TournamentPhase = 'setup' | 'tournament' | 'results';
+export type TournamentSetupMode = 'manual' | 'random';
+
+/** A padel pair competing in the round robin (distinct from the whiteboard's A/B `Team`). */
+export interface TournamentTeam {
+  id: string;
+  name: string;
+  p1: string;
+  p2: string;
+}
+
+export interface TournamentMatch {
+  id: string;
+  round: number;
+  teamA: string;
+  teamB: string;
+  /** Games won, stored as free-text digits while being edited. */
+  gamesA: string;
+  gamesB: string;
+}
+
+export interface TournamentStanding {
+  id: string;
+  name: string;
+  played: number;
+  wins: number;
+  losses: number;
+  gamesWon: number;
+}
+
+export interface TournamentState {
+  phase: TournamentPhase;
+  teams: TournamentTeam[];
+  matches: TournamentMatch[];
+}
